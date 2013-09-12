@@ -50,6 +50,7 @@ public class DetailActivity extends Activity implements OnClickListener {
 
 	private PhotoView landscapeImage = null;
 	private PhotoView IconImage = null;
+	private PhotoView mMapView = null;
 
 	private TextView nameText = null, detailText = null, detailNameText = null;
 
@@ -61,23 +62,11 @@ public class DetailActivity extends Activity implements OnClickListener {
 
 	private UserInfo mUserInfo = null;
 
-	BMapManager mBMapMan = null;
-	MapView mMapView = null;
-	MapController mMapController = null;
-	MKMapViewListener mMapListener = null;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		mCtx = this.getApplicationContext();
-
-		SeeXianApplication app = (SeeXianApplication) this.getApplication();
-		if (app.mBMapManager == null) {
-			app.mBMapManager = new BMapManager(this);
-			app.mBMapManager.init(SeeXianApplication.strKey,
-					new SeeXianApplication.MyGeneralListener());
-		}
 
 		setContentView(R.layout.detail_layout);
 
@@ -90,10 +79,10 @@ public class DetailActivity extends Activity implements OnClickListener {
 
 		landscapeImage = (PhotoView) findViewById(R.id.landscape_pic);
 		IconImage = (PhotoView) findViewById(R.id.icon_pic);
+		mMapView = (PhotoView) findViewById(R.id.bmapsView);
 		nameText = (TextView) findViewById(R.id.name_text);
 		detailText = (TextView) findViewById(R.id.detail_text);
 		detailNameText = (TextView) findViewById(R.id.detail_name_text);
-		mMapView = (MapView) findViewById(R.id.bmapsView);
 		linkButton = (ImageButton) findViewById(R.id.link_button);
 
 		int iconSize = mSreenWidth / 4;
@@ -121,84 +110,6 @@ public class DetailActivity extends Activity implements OnClickListener {
 		params4.setMargins(content_margin, content_margin, content_margin,
 				content_margin);
 		mMapView.setLayoutParams(params4);
-
-		mMapController = mMapView.getController();
-		mMapController.enableClick(false);
-
-		mMapListener = new MKMapViewListener() {
-			@Override
-			public void onMapMoveFinish() {
-				/**
-				 * 在此处理地图移动完成回调 缩放，平移等操作完成后，此回调被触发
-				 */
-				Loge.d("onMapMoveFinish");
-			}
-
-			@Override
-			public void onClickMapPoi(MapPoi mapPoiInfo) {
-				/**
-				 * 在此处理底图poi点击事件 显示底图poi名称并移动至该点 设置过：
-				 * mMapController.enableClick(true); 时，此回调才能被触发
-				 * 
-				 */
-				Loge.d("onClickMapPoi");
-				String title = "";
-				if (mapPoiInfo != null) {
-					title = mapPoiInfo.strText;
-					Toast.makeText(DetailActivity.this, title,
-							Toast.LENGTH_SHORT).show();
-					mMapController.animateTo(mapPoiInfo.geoPt);
-				}
-			}
-
-			@Override
-			public void onGetCurrentMap(Bitmap b) {
-				/**
-				 * 当调用过 mMapView.getCurrentMap()后，此回调会被触发 可在此保存截图至存储设备
-				 */
-				Loge.d("onGetCurrentMap");
-			}
-
-			@Override
-			public void onMapAnimationFinish() {
-				/**
-				 * 地图完成带动画的操作（如: animationTo()）后，此回调被触发
-				 */
-				Loge.d("onMapAnimationFinish");
-				Toast.makeText(DetailActivity.this, "地图加载完成",
-						Toast.LENGTH_SHORT).show();
-			}
-
-			/**
-			 * 在此处理地图载完成事件
-			 */
-			@Override
-			public void onMapLoadFinish() {
-				Loge.d("onMapLoadFinish");
-				try {
-					mMapController.setZoom(16);
-
-					MyLocationOverlay myLocationOverlay = new MyLocationOverlay(
-							mMapView);
-					LocationData locData = new LocationData();
-					locData.latitude = Double.valueOf(mUserHistoryData.mLat);
-					locData.longitude = Double.valueOf(mUserHistoryData.mLng);
-					locData.direction = 2.0f;
-					myLocationOverlay.setData(locData);
-
-					mMapView.getOverlays().add(myLocationOverlay);
-					mMapView.refresh();
-					mMapController.animateTo(new GeoPoint(
-							(int) (locData.latitude * 1e6),
-							(int) (locData.longitude * 1e6)));
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		};
-		mMapView.regMapViewListener(
-				SeeXianApplication.getInstance().mBMapManager, mMapListener);
 
 		getDataFromExtra();
 
@@ -233,16 +144,33 @@ public class DetailActivity extends Activity implements OnClickListener {
 
 	private void setDetailData() {
 
-		mMapController.setCenter(new GeoPoint((int) (Double
-				.valueOf(mUserHistoryData.mLat) * 1e6), (int) (Double
-				.valueOf(mUserHistoryData.mLng) * 1e6)));
+		try {
+			StringBuilder staticMap = new StringBuilder(
+					"http://api.map.baidu.com/staticimage?");
+			staticMap.append("center=");
+			staticMap.append(mUserHistoryData.mLng);
+			staticMap.append(",");
+			staticMap.append(mUserHistoryData.mLat);
+			staticMap.append("&width=");
+			staticMap.append(mSreenWidth / 1.8);
+			staticMap.append("&height=");
+			staticMap.append(mSreenWidth / 1.8);
+			staticMap.append("&zoom=17");
+			staticMap.append("&markers=");
+			staticMap.append(mUserHistoryData.mLng);
+			staticMap.append(",");
+			staticMap.append(mUserHistoryData.mLat);
+			staticMap.append("&markerStyles=l,");
+
+			Loge.i("staticMap URL = " + staticMap.toString());
+
+			URL localURL = new URL(staticMap.toString());
+			mMapView.setImageURL(localURL, true, null);
+		} catch (MalformedURLException localMalformedURLException) {
+			localMalformedURLException.printStackTrace();
+		}
 
 		try {
-			// String locUrl = "http://api.map.baidu.com/staticimage?" +
-			// "center="
-			// + mUserHistoryData.mLng + "," + mUserHistoryData.mLat
-			// + "&width=" + mSreenWidth/2 + "&height=" + mSreenWidth/2
-			// + "&zoom=15";
 			URL localURL = new URL(mUserHistoryData.mOriPic);
 			landscapeImage.setImageURL(localURL, true, null);
 		} catch (MalformedURLException localMalformedURLException) {
@@ -266,26 +194,16 @@ public class DetailActivity extends Activity implements OnClickListener {
 
 	@Override
 	protected void onResume() {
-		if (mMapView != null) {
-			mMapView.onResume();
-		}
 		super.onResume();
 	}
 
 	@Override
 	protected void onPause() {
-		if (mMapView != null) {
-			mMapView.onPause();
-		}
 		super.onPause();
 	}
 
 	@Override
 	protected void onDestroy() {
-		/*
-		 * TODO may cause app ANR remove it if (mMapView != null) {
-		 * mMapView.destroy(); }
-		 */
 		super.onDestroy();
 	}
 

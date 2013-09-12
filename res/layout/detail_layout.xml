@@ -59,7 +59,7 @@
             android:background="@drawable/content_bg"
             android:orientation="vertical" >
 
-            <com.baidu.mapapi.map.MapView
+            <com.comic.seexian.image.PhotoView
                 android:id="@+id/bmapsView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
