@@ -238,6 +238,11 @@ public class DetailActivity extends Activity implements OnClickListener {
 				.valueOf(mUserHistoryData.mLng) * 1e6)));
 
 		try {
+			// String locUrl = "http://api.map.baidu.com/staticimage?" +
+			// "center="
+			// + mUserHistoryData.mLng + "," + mUserHistoryData.mLat
+			// + "&width=" + mSreenWidth/2 + "&height=" + mSreenWidth/2
+			// + "&zoom=15";
 			URL localURL = new URL(mUserHistoryData.mOriPic);
 			landscapeImage.setImageURL(localURL, true, null);
 		} catch (MalformedURLException localMalformedURLException) {
