@@ -1,0 +1,165 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:panel="http://schemas.android.com/apk/res/com.comic.seexian"
+    xmlns:shrink="http://schemas.android.com/apk/res/com.comic.seexian"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_pic" >
+
+    <com.comic.seexian.view.ShrinkImageButton
+        android:id="@+id/sina"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="right"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/sina_log"
+        shrink:shinkSide="center" />
+
+    <LinearLayout
+        android:id="@+id/main_title_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_launcher" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:src="@drawable/kanxian_title_pic" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/line_button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/line1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal" >
+
+            <com.comic.seexian.view.ShrinkImageButton
+                android:id="@+id/photo"
+                android:layout_width="112dp"
+                android:layout_height="150dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/photo"
+                shrink:shinkSide="lefttop" />
+
+            <com.comic.seexian.view.ShrinkImageButton
+                android:id="@+id/open"
+                android:layout_width="112dp"
+                android:layout_height="150dp"
+                android:layout_marginLeft="5dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/open"
+                shrink:shinkSide="righttop" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/line2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal" >
+
+            <com.comic.seexian.view.ShrinkImageButton
+                android:id="@+id/history"
+                android:layout_width="112dp"
+                android:layout_height="150dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/history"
+                shrink:shinkSide="leftbottom" />
+
+            <com.comic.seexian.view.ShrinkImageButton
+                android:id="@+id/help"
+                android:layout_width="112dp"
+                android:layout_height="150dp"
+                android:layout_marginLeft="5dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/help"
+                shrink:shinkSide="rightbottom" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <com.comic.seexian.view.Panel
+        android:id="@+id/location_warn_panel"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        panel:animationDuration="500"
+        panel:content="@+id/panelContent"
+        panel:handle="@+id/panelHandle"
+        panel:linearFlying="true"
+        panel:position="top" >
+
+        <Button
+            android:id="@+id/panelHandle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp" />
+
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/panelContent"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/panel_bg"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/loaction_warn_text"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="@string/location_warn_info"
+                android:textColor="#ff6f0420"
+                android:textSize="19.33sp" />
+
+            <RelativeLayout
+                android:id="@+id/button_content"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal" >
+
+                <Button
+                    android:id="@+id/setting_button"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/common_btn_bg"
+                    android:text="@string/settings"
+                    android:textColor="#ff6f0420"
+                    android:textSize="19.33sp" />
+
+                <Button
+                    android:id="@+id/skip_button"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_toLeftOf="@id/setting_button"
+                    android:background="@drawable/common_btn_bg"
+                    android:text="@string/skip"
+                    android:textColor="#ff6f0420"
+                    android:textSize="19.33sp" />
+            </RelativeLayout>
+        </LinearLayout>
+    </com.comic.seexian.view.Panel>
+
+</FrameLayout>

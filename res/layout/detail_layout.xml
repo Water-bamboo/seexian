@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:shrink="http://schemas.android.com/apk/res/com.comic.seexian"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#fff5f5f5" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <FrameLayout
+            android:id="@+id/head_pic_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <com.comic.seexian.image.PhotoView
+                android:id="@+id/landscape_pic"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/landscape_pic_name"
+                android:scaleType="fitXY" />
+
+            <com.comic.seexian.image.PhotoView
+                android:id="@+id/icon_pic"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/icon_pic_name"
+                android:padding="3dp"
+                android:scaleType="centerCrop" />
+
+            <TextView
+                android:id="@+id/name_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:singleLine="true"
+                android:text="@string/app_name"
+                android:textColor="#ff6f0420"
+                android:textSize="25sp"
+                android:typeface="monospace" />
+        </FrameLayout>
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="3dp"
+            android:layout_marginTop="10dp"
+            android:background="#ff6f0420"
+            android:contentDescription="@string/divider_title" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="17dp"
+            android:layout_marginRight="17dp"
+            android:layout_marginTop="17dp"
+            android:background="@drawable/content_bg"
+            android:orientation="vertical" >
+
+            <com.baidu.mapapi.map.MapView
+                android:id="@+id/bmapsView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:paddingBottom="1dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="17dp"
+            android:layout_marginLeft="17dp"
+            android:layout_marginRight="17dp"
+            android:layout_marginTop="17dp"
+            android:background="@drawable/content_bg"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/content_margin"
+                android:layout_marginRight="@dimen/content_margin"
+                android:layout_marginTop="@dimen/content_margin"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/detail_name_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/introduction"
+                    android:textColor="@android:color/black"
+                    android:textSize="28sp"
+                    android:typeface="sans" />
+
+                <com.comic.seexian.view.ShrinkImageButton
+                    android:id="@+id/link_button"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="@dimen/content_margin"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/wiki_pic_name"
+                    android:src="@drawable/baidu_logo"
+                    shrink:shinkSide="center" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/detail_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/content_margin"
+                android:layout_marginLeft="@dimen/content_margin"
+                android:layout_marginRight="@dimen/content_margin"
+                android:layout_marginTop="@dimen/content_margin"
+                android:text="@string/app_name"
+                android:textColor="#ff777777"
+                android:textSize="19.33sp"
+                android:typeface="monospace" />
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>
