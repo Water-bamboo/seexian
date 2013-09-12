@@ -14,7 +14,7 @@ public class SeeXianApplication extends Application {
 	public boolean m_bKeyRight = true;
 	public BMapManager mBMapManager = null;
 
-	public static final String strKey = "2E868b96bbaf9710381bbca9a7bad005";
+	public static final String strKey = "8322542a56b53c320c09c0a3b3ea3a08";
 
 	/*
 	 * 注意：为了给用户提供更安全的服务，Android SDK自v2.1.3版本开始采用了全新的Key验证体系。

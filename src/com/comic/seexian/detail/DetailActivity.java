@@ -75,9 +75,6 @@ public class DetailActivity extends Activity implements OnClickListener {
 		SeeXianApplication app = (SeeXianApplication) this.getApplication();
 		if (app.mBMapManager == null) {
 			app.mBMapManager = new BMapManager(this);
-			/**
-			 * 如果BMapManager没有初始化则初始化BMapManager
-			 */
 			app.mBMapManager.init(SeeXianApplication.strKey,
 					new SeeXianApplication.MyGeneralListener());
 		}
@@ -128,15 +125,13 @@ public class DetailActivity extends Activity implements OnClickListener {
 		mMapController = mMapView.getController();
 		mMapController.enableClick(false);
 
-		/**
-		 * MapView的生命周期与Activity同步，当activity挂起时需调用MapView.onPause()
-		 */
 		mMapListener = new MKMapViewListener() {
 			@Override
 			public void onMapMoveFinish() {
 				/**
 				 * 在此处理地图移动完成回调 缩放，平移等操作完成后，此回调被触发
 				 */
+				Loge.d("onMapMoveFinish");
 			}
 
 			@Override
@@ -146,6 +141,7 @@ public class DetailActivity extends Activity implements OnClickListener {
 				 * mMapController.enableClick(true); 时，此回调才能被触发
 				 * 
 				 */
+				Loge.d("onClickMapPoi");
 				String title = "";
 				if (mapPoiInfo != null) {
 					title = mapPoiInfo.strText;
@@ -160,6 +156,7 @@ public class DetailActivity extends Activity implements OnClickListener {
 				/**
 				 * 当调用过 mMapView.getCurrentMap()后，此回调会被触发 可在此保存截图至存储设备
 				 */
+				Loge.d("onGetCurrentMap");
 			}
 
 			@Override
@@ -167,6 +164,9 @@ public class DetailActivity extends Activity implements OnClickListener {
 				/**
 				 * 地图完成带动画的操作（如: animationTo()）后，此回调被触发
 				 */
+				Loge.d("onMapAnimationFinish");
+				Toast.makeText(DetailActivity.this, "地图加载完成",
+						Toast.LENGTH_SHORT).show();
 			}
 
 			/**
@@ -174,15 +174,35 @@ public class DetailActivity extends Activity implements OnClickListener {
 			 */
 			@Override
 			public void onMapLoadFinish() {
-				Toast.makeText(DetailActivity.this, "地图加载完成",
-						Toast.LENGTH_SHORT).show();
+				Loge.d("onMapLoadFinish");
+				try {
+					mMapController.setZoom(16);
 
+					MyLocationOverlay myLocationOverlay = new MyLocationOverlay(
+							mMapView);
+					LocationData locData = new LocationData();
+					locData.latitude = Double.valueOf(mUserHistoryData.mLat);
+					locData.longitude = Double.valueOf(mUserHistoryData.mLng);
+					locData.direction = 2.0f;
+					myLocationOverlay.setData(locData);
+
+					mMapView.getOverlays().add(myLocationOverlay);
+					mMapView.refresh();
+					mMapController.animateTo(new GeoPoint(
+							(int) (locData.latitude * 1e6),
+							(int) (locData.longitude * 1e6)));
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		};
 		mMapView.regMapViewListener(
 				SeeXianApplication.getInstance().mBMapManager, mMapListener);
 
 		getDataFromExtra();
+
+		Loge.i("onCreate 4");
 	}
 
 	private void getDataFromExtra() {
@@ -213,19 +233,9 @@ public class DetailActivity extends Activity implements OnClickListener {
 
 	private void setDetailData() {
 
-		mMapController.setZoom(16);
-
-		MyLocationOverlay myLocationOverlay = new MyLocationOverlay(mMapView);
-		LocationData locData = new LocationData();
-		locData.latitude = Double.valueOf(mUserHistoryData.mLat);
-		locData.longitude = Double.valueOf(mUserHistoryData.mLng);
-		locData.direction = 2.0f;
-		myLocationOverlay.setData(locData);
-		mMapView.getOverlays().add(myLocationOverlay);
-		mMapView.refresh();
-		mMapView.getController().animateTo(
-				new GeoPoint((int) (locData.latitude * 1e6),
-						(int) (locData.longitude * 1e6)));
+		mMapController.setCenter(new GeoPoint((int) (Double
+				.valueOf(mUserHistoryData.mLat) * 1e6), (int) (Double
+				.valueOf(mUserHistoryData.mLng) * 1e6)));
 
 		try {
 			URL localURL = new URL(mUserHistoryData.mOriPic);
@@ -267,9 +277,10 @@ public class DetailActivity extends Activity implements OnClickListener {
 
 	@Override
 	protected void onDestroy() {
-		if (mMapView != null) {
-			mMapView.destroy();
-		}
+		/*
+		 * TODO may cause app ANR remove it if (mMapView != null) {
+		 * mMapView.destroy(); }
+		 */
 		super.onDestroy();
 	}
 

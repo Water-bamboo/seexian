@@ -20,7 +20,7 @@ public class SeexianCleanService extends Service {
 	public void onCreate() {
 		super.onCreate();
 	}
-
+   
 	@Override
 	public void onStart(Intent intent, int startId) {
 		new ImageCleanTask().execute(null);

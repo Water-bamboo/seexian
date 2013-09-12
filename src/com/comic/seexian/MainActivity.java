@@ -243,8 +243,14 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onDestroy() {
-		super.onDestroy();
+	    SeeXianApplication app = (SeeXianApplication)this.getApplication();
+		if (app.mBMapManager != null) {
+			app.mBMapManager.destroy();
+			app.mBMapManager = null;
+		}
 		unbindService(mServiceConnection);
+		super.onDestroy();
+
 	}
 
 	@Override
