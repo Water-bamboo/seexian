@@ -161,6 +161,7 @@ public class DetailActivity extends Activity implements OnClickListener {
 			staticMap.append(",");
 			staticMap.append(mUserHistoryData.mLat);
 			staticMap.append("&markerStyles=l,");
+			staticMap.append("&scale=2");
 
 			Loge.i("staticMap URL = " + staticMap.toString());
 

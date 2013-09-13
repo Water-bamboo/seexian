@@ -35,6 +35,15 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:src="@drawable/kanxian_title_pic" />
+
+        <com.comic.seexian.image.PhotoView
+            android:id="@+id/weather_image"
+            android:layout_width="35dp"
+            android:layout_height="25dp"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="5dp"
+            android:scaleType="centerCrop" />
     </LinearLayout>
 
     <LinearLayout

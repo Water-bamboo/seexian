@@ -1,21 +1,31 @@
 package com.comic.seexian;
 
 import java.io.ByteArrayOutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.R.integer;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -32,6 +42,7 @@ import android.widget.Toast;
 import com.comic.seexian.about.AboutActivity;
 import com.comic.seexian.clean.SeexianCleanService;
 import com.comic.seexian.history.UserHistoryActivity;
+import com.comic.seexian.image.PhotoView;
 import com.comic.seexian.sinaauth.AccessTokenKeeper;
 import com.comic.seexian.sinaauth.ConstantsSina;
 import com.comic.seexian.sinaauth.SinaPoisData;
@@ -58,6 +69,7 @@ public class MainActivity extends Activity {
 
 	private ImageButton photoIButton, historyIButton, helpIButton,
 			albumIButton, sinaAuthButton;
+	private PhotoView weatherImage;
 	private Button locationSetIButton, skipIButton;
 
 	private Panel mPanel = null;
@@ -122,6 +134,7 @@ public class MainActivity extends Activity {
 				ConstantsSina.REDIRECT_URL, ConstantsSina.SCOPE);
 		MainActivity.accessToken = AccessTokenKeeper.readAccessToken(this);
 
+		weatherImage = (PhotoView) findViewById(R.id.weather_image);
 		sinaAuthButton = (ImageButton) findViewById(R.id.sina);
 		photoIButton = (ImageButton) findViewById(R.id.photo);
 		albumIButton = (ImageButton) findViewById(R.id.open);
@@ -198,6 +211,8 @@ public class MainActivity extends Activity {
 		Intent intent = new Intent();
 		intent.setClass(MainActivity.this, UploadService.class);
 		bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
+
+		new GetWeatherTask().execute(null);
 	}
 
 	private ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -243,7 +258,7 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onDestroy() {
-	    SeeXianApplication app = (SeeXianApplication)this.getApplication();
+		SeeXianApplication app = (SeeXianApplication) this.getApplication();
 		if (app.mBMapManager != null) {
 			app.mBMapManager.destroy();
 			app.mBMapManager = null;
@@ -567,5 +582,98 @@ public class MainActivity extends Activity {
 			return false;
 		}
 	});
+
+	class GetWeatherTask extends AsyncTask<Void, Void, String> {
+
+		@Override
+		protected String doInBackground(Void... params) {
+
+			String weatherImageUrl = null;
+
+			SharedPreferences pref = mCtx.getSharedPreferences("seexian",
+					Context.MODE_APPEND);
+			String weatherDay = pref.getString("weatherDay", "");
+			Loge.i("weatherDay = " + weatherDay);
+			String[] dateArray = weatherDay.split("-");
+			if (dateArray.length == 3) {
+				int day = Integer.parseInt(dateArray[2]);
+				int month = Integer.parseInt(dateArray[1]);
+				Date date = new Date();
+
+				if (date.getDate() == day && (date.getMonth() + 1) == month) {
+					Loge.i("day match Hours = " + date.getHours());
+					if (date.getHours() > 18) {
+						weatherImageUrl = pref.getString("nightPictureUrl", "");
+					} else {
+						weatherImageUrl = pref.getString("dayPictureUrl", "");
+					}
+					return weatherImageUrl;
+				}
+			}
+
+			if (!SeeXianUtils.isNetworkAvailable(mCtx)) {
+				return null;
+			}
+
+			HashMap<String, Object> queryParams = new HashMap<String, Object>();
+			queryParams.put("ak", "E8affd1907e29221fd910bcc41e77c1b");
+			queryParams.put("location", "西安");
+			queryParams.put("output", "json");
+			Object oWeather = SeeXianNetUtils.getResult(
+					"http://api.map.baidu.com/telematics/v3/weather",
+					queryParams, null);
+			if (oWeather == null) {
+				return null;
+			}
+
+			Loge.i("oWeather = " + oWeather);
+
+			try {
+				JSONObject jWeather = new JSONObject(oWeather.toString());
+				JSONArray resultJArray = jWeather.getJSONArray("results");
+				if (resultJArray.length() > 0) {
+					JSONObject weatherJOData = resultJArray.getJSONObject(0);
+					JSONArray weatherJAData = weatherJOData
+							.getJSONArray("weather_data");
+					if (weatherJAData.length() > 0) {
+						JSONObject item = weatherJAData.getJSONObject(0);
+						String dayImage = item.getString("dayPictureUrl");
+						String nightImage = item.getString("nightPictureUrl");
+						weatherImageUrl = nightImage;
+
+						SimpleDateFormat sdf = new SimpleDateFormat(
+								"yyyy-MM-dd", Locale.CHINA);
+						Editor editor = pref.edit();
+						editor.putString("dayPictureUrl", dayImage);
+						editor.putString("nightPictureUrl", nightImage);
+						editor.putString("weatherDay", sdf.format(new Date()));
+						editor.commit();
+					}
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+
+			return weatherImageUrl;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			Loge.i("result = " + result);
+			if (result != null && result.length() != 0) {
+				try {
+					if (weatherImage != null) {
+						URL localURL = new URL(result);
+						weatherImage.setImageURL(localURL, false, null);
+						weatherImage.invalidate();
+					}
+				} catch (MalformedURLException localMalformedURLException) {
+					localMalformedURLException.printStackTrace();
+				}
+			}
+			super.onPostExecute(result);
+		}
+
+	}
 
 }

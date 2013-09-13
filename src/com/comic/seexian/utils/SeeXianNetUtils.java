@@ -442,14 +442,19 @@ public class SeeXianNetUtils {
 		if (params == null) {
 			params = new HashMap<String, Object>();
 		}
+		if(access_token != null){
+			params.put("access_token", access_token);
+		}
 
-		params.put("access_token", access_token);
 		String queryParams = buildParams(params, "&");
 		final String entityString = queryParams;
 
 		StringBuffer requestUrl = new StringBuffer(api_url);
-		requestUrl.append("?");
-		requestUrl.append(entityString);
+		if (entityString != null && !entityString.isEmpty()) {
+			requestUrl.append("?");
+			requestUrl.append(entityString);
+		}
+
 
 		Loge.d("requestUrl = " + requestUrl.toString());
 
