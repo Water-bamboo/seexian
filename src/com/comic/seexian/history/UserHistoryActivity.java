@@ -22,13 +22,18 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;
 import android.text.format.DateFormat;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.View.OnCreateContextMenuListener;
 import android.view.View.OnTouchListener;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -45,7 +50,8 @@ import com.comic.seexian.view.NetworkDialog;
 import com.comic.seexian.view.PullDownRefreashListView;
 
 public class UserHistoryActivity extends Activity implements
-		OnItemClickListener {
+		OnItemClickListener, OnItemLongClickListener,
+		OnCreateContextMenuListener {
 
 	private Context mCtx;
 
@@ -71,6 +77,8 @@ public class UserHistoryActivity extends Activity implements
 	// ------------------------------------------------------------------
 
 	private String mLatestId;
+
+	private int mSelectedItem;
 
 	private Handler mMessageHandler = new Handler(new Handler.Callback() {
 		@Override
@@ -121,6 +129,8 @@ public class UserHistoryActivity extends Activity implements
 		mListView.setOnItemClickListener(this);
 		mListView.addCustomView(mRefreshHorizontalImage,
 				mRefreshHorizontalProgress);
+		mListView.setOnCreateContextMenuListener(this);
+		mListView.setOnItemLongClickListener(this);
 
 		mListView
 				.setOnRefreshListener(new PullDownRefreashListView.OnRefreshListener() {
@@ -136,7 +146,7 @@ public class UserHistoryActivity extends Activity implements
 
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		Loge.d("Item postion = " + arg2);
+		Loge.d("onItemClick postion = " + arg2);
 
 		Cursor cursor = (Cursor) mListAdapter.getItem(arg2);
 
@@ -170,6 +180,32 @@ public class UserHistoryActivity extends Activity implements
 		intent.putExtras(extras);
 		intent.setClass(UserHistoryActivity.this, DetailActivity.class);
 		startActivity(intent);
+	}
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2,
+			long arg3) {
+		mSelectedItem = arg2;
+		return false;
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		menu.add(R.string.delete_item);
+		super.onCreateContextMenu(menu, v, menuInfo);
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		Loge.i("onContextItemSelected delete weibo item = " + mSelectedItem);
+
+		Cursor cursor = (Cursor) mListAdapter.getItem(mSelectedItem);
+		UserHistoryData itemData = new UserHistoryData();
+		itemData.mPostId = cursor.getString(1);
+
+		new DeleteWeiboTask().execute(itemData.mPostId);
+		return super.onContextItemSelected(item);
 	}
 
 	@Override
@@ -369,4 +405,62 @@ public class UserHistoryActivity extends Activity implements
 		}
 
 	}
+
+	class DeleteWeiboTask extends AsyncTask<String, Void, String> {
+
+		@Override
+		protected String doInBackground(String... params) {
+			String postId;
+			if (params.length == 0) {
+				return null;
+			}
+
+			postId = params[0];
+
+			Loge.i("DeleteWeiboTask post id = " + postId);
+
+			if (!SeeXianUtils.isNetworkAvailable(mCtx)) {
+				if (mMessageHandler != null) {
+					mMessageHandler
+							.sendEmptyMessage(Constants.MESSAGE_NETWORK_ERROR);
+				}
+				return null;
+			}
+
+			String acctoken = SeeXianNetUtils.getAccessToken(mCtx);
+
+			if (acctoken == null || acctoken.isEmpty()) {
+				if (mMessageHandler != null) {
+					mMessageHandler
+							.sendEmptyMessage(Constants.MESSAGE_SHOW_TOKEN_WARN);
+				}
+				return null;
+			}
+
+			HashMap<String, Object> queryParams = new HashMap<String, Object>();
+			queryParams.put("id", postId);
+			SeeXianNetUtils.postResult(
+					"https://api.weibo.com/2/statuses/destroy.json",
+					queryParams, acctoken);
+
+			if (mContentResolver == null) {
+				mContentResolver = mCtx.getContentResolver();
+			}
+
+			mContentResolver.delete(
+					SeeXianProvider.CONTENT_URI_SEE_XIAN_USER_POST,
+					"postid = '" + postId + "'", null);
+
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			new GetDataTask()
+					.execute(SeeXianProvider.CONTENT_URI_SEE_XIAN_USER_POST);
+			super.onPostExecute(result);
+		}
+
+	}
+
 }

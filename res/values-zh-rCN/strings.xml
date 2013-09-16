@@ -50,4 +50,5 @@
     <string name="ptr_release_to_refresh">Release to refresh</string>
     <string name="ptr_refreshing">Refreshing&#8230;</string>
     
+    <string name="delete_item">删除微博</string>
 </resources>
