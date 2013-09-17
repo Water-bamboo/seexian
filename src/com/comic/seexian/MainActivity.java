@@ -606,7 +606,7 @@ public class MainActivity extends Activity {
 
 				if (date.getDate() == day && (date.getMonth() + 1) == month) {
 					Loge.i("day match Hours = " + date.getHours());
-					if (date.getHours() > 18) {
+					if (date.getHours() >= 18) {
 						weatherImageUrl = pref.getString("nightPictureUrl", "");
 					} else {
 						weatherImageUrl = pref.getString("dayPictureUrl", "");
