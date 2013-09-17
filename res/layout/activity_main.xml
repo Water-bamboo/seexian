@@ -36,14 +36,28 @@
             android:layout_marginLeft="5dp"
             android:src="@drawable/kanxian_title_pic" />
 
-        <com.comic.seexian.image.PhotoView
-            android:id="@+id/weather_image"
-            android:layout_width="35dp"
-            android:layout_height="25dp"
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="2dp"
             android:layout_marginLeft="5dp"
-            android:scaleType="centerCrop" />
+            android:orientation="vertical" >
+
+            <com.comic.seexian.image.PhotoView
+                android:id="@+id/weather_image"
+                android:layout_width="28dp"
+                android:layout_height="20dp"
+                android:scaleType="centerCrop" />
+
+            <TextView
+                android:id="@+id/temperature_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/primary_text_light_nodisable"
+                android:textSize="12sp"
+                android:typeface="monospace" />
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout

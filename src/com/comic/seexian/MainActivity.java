@@ -12,7 +12,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.R.integer;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -37,6 +36,7 @@ import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.comic.seexian.about.AboutActivity;
@@ -70,6 +70,7 @@ public class MainActivity extends Activity {
 	private ImageButton photoIButton, historyIButton, helpIButton,
 			albumIButton, sinaAuthButton;
 	private PhotoView weatherImage;
+	private TextView tempText;
 	private Button locationSetIButton, skipIButton;
 
 	private Panel mPanel = null;
@@ -90,6 +91,8 @@ public class MainActivity extends Activity {
 	private UploadService mUploadService = null;
 
 	double lat = -1, lng = -1;
+
+	private String mTemperature;
 
 	private View.OnClickListener locationOnClickListener = new View.OnClickListener() {
 		@Override
@@ -134,6 +137,7 @@ public class MainActivity extends Activity {
 				ConstantsSina.REDIRECT_URL, ConstantsSina.SCOPE);
 		MainActivity.accessToken = AccessTokenKeeper.readAccessToken(this);
 
+		tempText = (TextView) findViewById(R.id.temperature_text);
 		weatherImage = (PhotoView) findViewById(R.id.weather_image);
 		sinaAuthButton = (ImageButton) findViewById(R.id.sina);
 		photoIButton = (ImageButton) findViewById(R.id.photo);
@@ -607,6 +611,7 @@ public class MainActivity extends Activity {
 					} else {
 						weatherImageUrl = pref.getString("dayPictureUrl", "");
 					}
+					mTemperature = pref.getString("temperature", "");
 					return weatherImageUrl;
 				}
 			}
@@ -639,6 +644,7 @@ public class MainActivity extends Activity {
 						JSONObject item = weatherJAData.getJSONObject(0);
 						String dayImage = item.getString("dayPictureUrl");
 						String nightImage = item.getString("nightPictureUrl");
+						mTemperature = item.getString("temperature");
 						weatherImageUrl = nightImage;
 
 						SimpleDateFormat sdf = new SimpleDateFormat(
@@ -646,6 +652,7 @@ public class MainActivity extends Activity {
 						Editor editor = pref.edit();
 						editor.putString("dayPictureUrl", dayImage);
 						editor.putString("nightPictureUrl", nightImage);
+						editor.putString("temperature", mTemperature);
 						editor.putString("weatherDay", sdf.format(new Date()));
 						editor.commit();
 					}
@@ -662,14 +669,21 @@ public class MainActivity extends Activity {
 			Loge.i("result = " + result);
 			if (result != null && result.length() != 0) {
 				try {
-					if (weatherImage != null) {
+					if (weatherImage != null && tempText != null) {
 						URL localURL = new URL(result);
 						weatherImage.setImageURL(localURL, false, null);
 						weatherImage.invalidate();
 					}
+					if (mTemperature != null) {
+						Loge.i("mTemperature = " + mTemperature);
+						tempText.setText(mTemperature);
+					}
 				} catch (MalformedURLException localMalformedURLException) {
 					localMalformedURLException.printStackTrace();
 				}
+			} else {
+				weatherImage.setVisibility(View.GONE);
+				tempText.setVisibility(View.GONE);
 			}
 			super.onPostExecute(result);
 		}
