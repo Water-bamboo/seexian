@@ -1,44 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">SeeXian</string>
-    <string name="app_icon_name">SeeXian</string>
-    <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="app_name">看西安</string>
+    <string name="app_icon_name">看西安</string>
+    <string name="action_settings">设置</string>
+
     <string name="image_title">See Xian</string>
     <string name="divider_title">divider</string>
     
-    <string name="location_warn_info">See Xian needs access to your location. Please turn on Location Service.</string>
-    <string name="settings">Settings</string>
-    <string name="skip">Skip</string>
-    <string name="cancel">Cancel</string>
+    <string name="location_warn_info">看西安需要获取您的位置。请在设置中开启位置服务。</string>
+    <string name="settings">设置</string>
+    <string name="skip">跳过</string>
+    <string name="cancel">取消</string>
     
-    <string name="network_warn">Turn on Network</string>
-    <string name="network_warn_info">See Xian needs access to network. Please turn on Wi-Fi or Mobile data.</string>
+    <string name="network_warn">开启网络</string>
+    <string name="network_warn_info">看西安需要访问网络。开开启Wi-Fi或者数据连接（数据连接资费请咨询运营商）。</string>
     
-    <string name="help_content_image_name">Help content</string>
+    <string name="empty_text">无数据</string>
+    <string name="loading">加载中&#8230;</string>
     
-    <string name="landscape_pic_name">Landscape Picture</string>
-    <string name="icon_pic_name">Icon Picture</string>
+    <string name="wiki">百科</string>
     
-    <string name="wiki_pic_name">Wiki</string>
+    <string name="introduction">简介</string>
     
-    <string name="empty_text">No data</string>
-    <string name="loading">Loading&#8230;</string>
+    <string name="post">发布</string>
     
-    <string name="wiki">Wiki</string>
+    <string name="plz_login_sina">请登陆新浪微博</string>
     
-    <string name="introduction">Introduction</string>
+    <string name="login_success">登陆新浪微博成功</string>
     
-    <string name="post">Post</string>
+    <string name="post_success">发布到新浪微博成功</string>
     
-    <string name="plz_login_sina">Please login Sina Weibo</string>
+    <string name="post_fail">发布到新浪微博失败</string>
     
-    <string name="post_success">Post to Sina Weibo success</string>
-    
-    <string name="post_fail">Post to Sina Weibo fail</string>
-    
-    <string name="upload">Uploading: </string>
+    <string name="upload">上传中: </string>
     
     <string name="month">月</string>
     
@@ -46,9 +41,9 @@
     
     <string name="last_update">更新于</string>
     
-    <string name="ptr_pull_to_refresh">Pull to refresh</string>
-    <string name="ptr_release_to_refresh">Release to refresh</string>
-    <string name="ptr_refreshing">Refreshing&#8230;</string>
+    <string name="ptr_pull_to_refresh">下拉刷新&#8230;</string>
+    <string name="ptr_release_to_refresh">释放并刷新&#8230;</string>
+    <string name="ptr_refreshing">加载中&#8230;</string>
     
     <string name="delete_item">删除微博</string>
 </resources>
