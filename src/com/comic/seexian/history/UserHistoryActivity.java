@@ -160,7 +160,8 @@ public class UserHistoryActivity extends Activity implements
 		itemData.mTime = cursor.getString(6);
 		itemData.mLat = cursor.getString(7);
 		itemData.mLng = cursor.getString(8);
-		itemData.mLandscapeId = cursor.getLong(9);
+		itemData.mDistance = cursor.getString(9);
+		itemData.mLandscapeId = cursor.getLong(10);
 
 		Intent intent = new Intent();
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -174,6 +175,8 @@ public class UserHistoryActivity extends Activity implements
 		extras.putString(UserHistoryData.KEY_USER_TIME, itemData.mTime);
 		extras.putString(UserHistoryData.KEY_USER_LATITUDE, itemData.mLat);
 		extras.putString(UserHistoryData.KEY_USER_LONGITUDE, itemData.mLng);
+		extras.putString(UserHistoryData.KEY_USER_DISATACE_TO_XIAN,
+				itemData.mDistance);
 		extras.putLong(UserHistoryData.KEY_USER_LANDSCAPE_ID,
 				itemData.mLandscapeId);
 

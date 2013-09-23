@@ -46,4 +46,9 @@
     <string name="ptr_refreshing">加载中&#8230;</string>
     
     <string name="delete_item">删除微博</string>
+    
+    <string name="xian">西安</string>
+    <string name="distance_to">距离</string>
+    
+    <string name="kilometer">公里</string>
 </resources>

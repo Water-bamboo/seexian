@@ -53,5 +53,9 @@
     <string name="ptr_refreshing">Refreshing&#8230;</string>
     
     <string name="delete_item">Delete item</string>
+    
+    <string name="xian">Xi\'an</string>
+    <string name="distance_to">Distance to</string>
 
+    <string name="kilometer">km</string>
 </resources>

@@ -622,7 +622,7 @@ public class MainActivity extends Activity {
 			}
 
 			HashMap<String, Object> queryParams = new HashMap<String, Object>();
-			queryParams.put("ak", "E8affd1907e29221fd910bcc41e77c1b");
+			queryParams.put("ak", Constants.BAIDU_MAP_SERVICE_KEY);
 			queryParams.put("location", "西安");
 			queryParams.put("output", "json");
 			Object oWeather = SeeXianNetUtils.getResult(

@@ -38,7 +38,7 @@ public class SeeXianProvider extends ContentProvider {
 	public static final String KEY_LINK_URL = "link";
 	public static final String KEY_TIME = "time";
 	public static final String KEY_LATITUDE = "latitude";
-	public static final String KEY_LONGITUDE = "longitude ";
+	public static final String KEY_LONGITUDE = "longitude";
 
 	/** Name of table in the database */
 	private static final String DB_TABLE_USER_POST = "userdata";
@@ -54,8 +54,9 @@ public class SeeXianProvider extends ContentProvider {
 	public static final String KEY_USER_THUMB_PIC = "thumbnail";
 	public static final String KEY_USER_TIME = "time";
 	public static final String KEY_USER_LATITUDE = "latitude";
-	public static final String KEY_USER_LONGITUDE = "longitude ";
-	public static final String KEY_USER_LANDSCAPE_ID = "landscapeid ";
+	public static final String KEY_USER_LONGITUDE = "longitude";
+	public static final String KEY_USER_LANDSCAPE_ID = "landscapeid";
+	public static final String KEY_USER_DISATACE_TO_XIAN = "distance";
 
 	@Override
 	public boolean onCreate() {
@@ -186,8 +187,9 @@ public class SeeXianProvider extends ContentProvider {
 					+ KEY_USER_SOURCE + " TEXT," + KEY_USER_ORIGIN_PIC
 					+ " TEXT, " + KEY_USER_THUMB_PIC + " TEXT, "
 					+ KEY_USER_TIME + " TEXT, " + KEY_USER_LATITUDE + " TEXT, "
-					+ KEY_USER_LONGITUDE + " TEXT, " + KEY_USER_LANDSCAPE_ID
-					+ " INTEGER );";
+					+ KEY_USER_LONGITUDE + " TEXT, "
+					+ KEY_USER_DISATACE_TO_XIAN + " TEXT, "
+					+ KEY_USER_LANDSCAPE_ID + " INTEGER );";
 			Loge.v("create database User = " + commandUser);
 			db.execSQL(commandUser);
 		}

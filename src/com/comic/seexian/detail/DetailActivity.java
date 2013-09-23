@@ -5,8 +5,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -21,23 +28,17 @@ import android.view.View.OnClickListener;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.baidu.mapapi.BMapManager;
-import com.baidu.mapapi.map.LocationData;
-import com.baidu.mapapi.map.MKMapViewListener;
-import com.baidu.mapapi.map.MapController;
-import com.baidu.mapapi.map.MapPoi;
-import com.baidu.mapapi.map.MapView;
-import com.baidu.mapapi.map.MyLocationOverlay;
-import com.baidu.platform.comapi.basestruct.GeoPoint;
+import com.comic.seexian.Constants;
 import com.comic.seexian.Loge;
 import com.comic.seexian.R;
-import com.comic.seexian.SeeXianApplication;
+import com.comic.seexian.database.SeeXianProvider;
 import com.comic.seexian.history.UserHistoryData;
 import com.comic.seexian.image.PhotoView;
 import com.comic.seexian.sinaauth.AccessTokenKeeper;
 import com.comic.seexian.sinaauth.UserInfo;
+import com.comic.seexian.utils.SeeXianNetUtils;
+import com.comic.seexian.utils.SeeXianUtils;
 
 public class DetailActivity extends Activity implements OnClickListener {
 
@@ -54,6 +55,9 @@ public class DetailActivity extends Activity implements OnClickListener {
 
 	private TextView nameText = null, detailText = null, detailNameText = null;
 
+	private View distancePanel;
+	private TextView distanceText;
+
 	private ImageButton linkButton = null;
 
 	private Drawable mLandscapeImage;
@@ -61,6 +65,8 @@ public class DetailActivity extends Activity implements OnClickListener {
 	private UserHistoryData mUserHistoryData = new UserHistoryData();
 
 	private UserInfo mUserInfo = null;
+
+	private float mDistanceToXian;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +90,9 @@ public class DetailActivity extends Activity implements OnClickListener {
 		detailText = (TextView) findViewById(R.id.detail_text);
 		detailNameText = (TextView) findViewById(R.id.detail_name_text);
 		linkButton = (ImageButton) findViewById(R.id.link_button);
+
+		distancePanel = (View) findViewById(R.id.distance_panel);
+		distanceText = (TextView) findViewById(R.id.distance_text);
 
 		int iconSize = mSreenWidth / 4;
 		LayoutParams params1 = new LayoutParams(iconSize, iconSize);
@@ -136,6 +145,8 @@ public class DetailActivity extends Activity implements OnClickListener {
 				.getString(UserHistoryData.KEY_USER_LATITUDE);
 		mUserHistoryData.mLng = extras
 				.getString(UserHistoryData.KEY_USER_LONGITUDE);
+		mUserHistoryData.mDistance = extras
+				.getString(UserHistoryData.KEY_USER_DISATACE_TO_XIAN);
 		mUserHistoryData.mLandscapeId = extras
 				.getLong(UserHistoryData.KEY_USER_LANDSCAPE_ID);
 
@@ -187,9 +198,29 @@ public class DetailActivity extends Activity implements OnClickListener {
 			localMalformedURLException.printStackTrace();
 		}
 
-		// detailText.setText(mHistoryData.mDetail);
-
 		linkButton.setOnClickListener(this);
+
+		if (mUserHistoryData.mDistance == null
+				|| mUserHistoryData.mDistance.isEmpty()) {
+			distancePanel.setVisibility(View.GONE);
+		} else {
+			float iDistance = Float.valueOf(mUserHistoryData.mDistance);
+			if (iDistance > Constants.MINI_DISTANCE) {
+				StringBuilder distanseSB = new StringBuilder();
+				distanseSB.append(this.getResources().getString(
+						R.string.distance_to));
+				distanseSB.append(this.getResources().getString(R.string.xian));
+				distanseSB.append(": ");
+				int distance = (int) iDistance / 1000;
+				distanseSB.append(distance);
+				distanseSB.append(this.getResources().getString(
+						R.string.kilometer));
+
+				distanceText.setText(distanseSB.toString());
+			} else {
+				distancePanel.setVisibility(View.GONE);
+			}
+		}
 
 	}
 
@@ -289,6 +320,58 @@ public class DetailActivity extends Activity implements OnClickListener {
 		@Override
 		protected Void doInBackground(Void... paramArrayOfParams) {
 			mUserInfo = AccessTokenKeeper.readUserInfo(mCtx);
+
+			if (mUserHistoryData.mDistance == null
+					|| mUserHistoryData.mDistance.isEmpty()) {
+
+				if (!SeeXianUtils.isNetworkAvailable(mCtx)) {
+					return null;
+				}
+
+				HashMap<String, Object> queryParams = new HashMap<String, Object>();
+				queryParams.put("ak", Constants.BAIDU_MAP_SERVICE_KEY);
+				StringBuilder waypoints = new StringBuilder();
+				waypoints.append(mUserHistoryData.mLng);
+				waypoints.append(",");
+				waypoints.append(mUserHistoryData.mLat);
+				waypoints.append(";");
+				waypoints.append(Constants.LNG_OF_BELL_TOWER);
+				waypoints.append(",");
+				waypoints.append(Constants.LAT_OF_BELL_TOWER);
+				queryParams.put("waypoints", waypoints.toString());
+				queryParams.put("output", "json");
+				Object oDistance = SeeXianNetUtils.getResult(
+						"http://api.map.baidu.com/telematics/v3/distance",
+						queryParams, null);
+
+				String distance = null;
+				try {
+					JSONObject jDistance = new JSONObject(oDistance.toString());
+					JSONArray resultJArray = jDistance.getJSONArray("results");
+
+					if (resultJArray.length() > 0) {
+						distance = resultJArray.get(0).toString();
+					}
+
+					Loge.i("Distance to Xian = " + distance);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				mUserHistoryData.mDistance = distance;
+
+				ContentResolver resolver = mCtx.getContentResolver();
+
+				ContentValues updatedValues = new ContentValues();
+				updatedValues.put(SeeXianProvider.KEY_USER_DISATACE_TO_XIAN,
+						distance);
+
+				String where = SeeXianProvider.KEY_USER_POST_ID + "='"
+						+ mUserHistoryData.mPostId + "'";
+				resolver.update(SeeXianProvider.CONTENT_URI_SEE_XIAN_USER_POST,
+						updatedValues, where, null);
+
+			}
+
 			return null;
 		}
 

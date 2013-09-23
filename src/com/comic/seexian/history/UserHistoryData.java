@@ -10,8 +10,9 @@ public class UserHistoryData {
 	public static final String KEY_USER_THUMB_PIC = "thumbnail";
 	public static final String KEY_USER_TIME = "time";
 	public static final String KEY_USER_LATITUDE = "latitude";
-	public static final String KEY_USER_LONGITUDE = "longitude ";
-	public static final String KEY_USER_LANDSCAPE_ID = "landscapeid ";
+	public static final String KEY_USER_LONGITUDE = "longitude";
+	public static final String KEY_USER_LANDSCAPE_ID = "landscapeid";
+	public static final String KEY_USER_DISATACE_TO_XIAN = "distance";
 
 	public String mPostId;
 	public String mText;
@@ -21,5 +22,6 @@ public class UserHistoryData {
 	public String mTime;
 	public String mLat;
 	public String mLng;
+	public String mDistance;
 	public long mLandscapeId;
 }
