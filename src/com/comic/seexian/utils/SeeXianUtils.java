@@ -138,7 +138,11 @@ public class SeeXianUtils {
 		sbDate.append(" ");
 		sbDate.append(finalDate.getHours());
 		sbDate.append(":");
-		sbDate.append(finalDate.getMinutes());
+		if(finalDate.getMinutes() == 0){
+			sbDate.append("00");
+		}else{
+			sbDate.append(finalDate.getMinutes());
+		}
 
 		finalDate = null;
 

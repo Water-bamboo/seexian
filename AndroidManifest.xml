@@ -28,7 +28,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
-          android:name="com.comic.seexian.SeeXianApplication"
+        android:name="com.comic.seexian.SeeXianApplication"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
         <activity
@@ -52,13 +52,6 @@
             android:theme="@android:style/Theme.Light.NoTitleBar" >
         </activity>
         <activity
-            android:name="com.comic.seexian.history.HistoryActivity"
-            android:configChanges="orientation|keyboardHidden|screenLayout"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Light.NoTitleBar" >
-        </activity>
-        <activity
             android:name="com.comic.seexian.history.UserHistoryActivity"
             android:configChanges="orientation|keyboardHidden|screenLayout"
             android:label="@string/app_name"
@@ -76,7 +69,6 @@
             android:name="com.comic.seexian.upload.UploadService"
             android:label="@string/app_name" >
         </service>
-        
         <service
             android:name="com.comic.seexian.clean.SeexianCleanService"
             android:label="@string/app_name" >

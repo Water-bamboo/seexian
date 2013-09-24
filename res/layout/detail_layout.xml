@@ -41,6 +41,19 @@
                 android:textColor="#ff6f0420"
                 android:textSize="25sp"
                 android:typeface="monospace" />
+
+            <com.comic.seexian.view.ShrinkImageButton
+                android:id="@+id/link_button"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="right"
+                android:layout_marginLeft="@dimen/content_margin"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/wiki_pic_name"
+                android:src="@drawable/baidu_logo"
+                shrink:shinkSide="center" />
         </FrameLayout>
 
         <ImageView
@@ -100,49 +113,30 @@
             android:background="@drawable/content_bg"
             android:orientation="vertical" >
 
-            <LinearLayout
+            <com.comic.seexian.detail.AroundGridView
+                android:id="@+id/detail_grid"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/content_margin"
-                android:layout_marginRight="@dimen/content_margin"
-                android:layout_marginTop="@dimen/content_margin"
-                android:orientation="horizontal" >
-
-                <TextView
-                    android:id="@+id/detail_name_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:text="@string/introduction"
-                    android:textColor="@android:color/black"
-                    android:textSize="28sp"
-                    android:typeface="sans" />
-
-                <com.comic.seexian.view.ShrinkImageButton
-                    android:id="@+id/link_button"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginLeft="@dimen/content_margin"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@string/wiki_pic_name"
-                    android:src="@drawable/baidu_logo"
-                    shrink:shinkSide="center" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/detail_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="280dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="@dimen/content_margin"
                 android:layout_marginLeft="@dimen/content_margin"
                 android:layout_marginRight="@dimen/content_margin"
                 android:layout_marginTop="@dimen/content_margin"
-                android:text="@string/app_name"
-                android:textColor="#ff777777"
-                android:textSize="19.33sp"
-                android:typeface="monospace" />
+                android:horizontalSpacing="5dp"
+                android:numColumns="5"
+                android:stretchMode="columnWidth"
+                android:verticalSpacing="5dp" />
+
+            <com.comic.seexian.view.ShrinkImageButton
+                android:id="@+id/around_refresh"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/content_margin"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/wiki_pic_name"
+                android:src="@drawable/refresh"
+                shrink:shinkSide="center" />
         </LinearLayout>
     </LinearLayout>
 

@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.SearchManager;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -20,6 +21,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -53,7 +55,7 @@ public class DetailActivity extends Activity implements OnClickListener {
 	private PhotoView IconImage = null;
 	private PhotoView mMapView = null;
 
-	private TextView nameText = null, detailText = null, detailNameText = null;
+	private TextView nameText = null;
 
 	private View distancePanel;
 	private TextView distanceText;
@@ -87,8 +89,6 @@ public class DetailActivity extends Activity implements OnClickListener {
 		IconImage = (PhotoView) findViewById(R.id.icon_pic);
 		mMapView = (PhotoView) findViewById(R.id.bmapsView);
 		nameText = (TextView) findViewById(R.id.name_text);
-		detailText = (TextView) findViewById(R.id.detail_text);
-		detailNameText = (TextView) findViewById(R.id.detail_name_text);
 		linkButton = (ImageButton) findViewById(R.id.link_button);
 
 		distancePanel = (View) findViewById(R.id.distance_panel);
@@ -96,7 +96,7 @@ public class DetailActivity extends Activity implements OnClickListener {
 
 		int iconSize = mSreenWidth / 4;
 		LayoutParams params1 = new LayoutParams(iconSize, iconSize);
-		params1.setMargins(iconSize / 2, mScreenHeight / 3 - iconSize, 0, 0);
+		params1.setMargins(iconSize / 3, mScreenHeight / 3 - iconSize, 0, 0);
 		IconImage.setLayoutParams(params1);
 
 		LayoutParams params2 = new LayoutParams(LayoutParams.FILL_PARENT,
@@ -105,7 +105,7 @@ public class DetailActivity extends Activity implements OnClickListener {
 
 		LayoutParams params3 = new LayoutParams(LayoutParams.WRAP_CONTENT,
 				LayoutParams.WRAP_CONTENT);
-		params3.setMargins(iconSize + iconSize / 2, mScreenHeight / 3
+		params3.setMargins(iconSize + iconSize / 3, mScreenHeight / 3
 				- iconSize / 2, 0, 0);
 		nameText.setLayoutParams(params3);
 
@@ -307,17 +307,18 @@ public class DetailActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		// if (mHistoryData.mLinkUrl == null
-		// || mHistoryData.mLinkUrl.length() == 0) {
-		// Intent intent = new Intent();
-		// intent.setAction(Intent.ACTION_WEB_SEARCH);
-		// intent.putExtra(SearchManager.QUERY, mHistoryData.mName);
-		// startActivity(intent);
-		// } else {
-		// Intent intent = new Intent(Intent.ACTION_VIEW,
-		// Uri.parse(mHistoryData.mLinkUrl));
-		// startActivity(intent);
-		// }
+		if (mUserHistoryData.mPosName != null
+				|| mUserHistoryData.mPosName.length() != 0) {
+			Intent intent = new Intent();
+			intent.setAction(Intent.ACTION_WEB_SEARCH);
+			intent.putExtra(SearchManager.QUERY, mUserHistoryData.mPosName);
+			startActivity(intent);
+		} else {
+			Intent intent = new Intent(
+					Intent.ACTION_VIEW,
+					Uri.parse("http://baike.baidu.com/link?url=FnhQSDf4y12tWvWmbSTJtPwjo0f_dQIB166_O9bpTgpvdArwabeDB8ur3oSXPssz"));
+			startActivity(intent);
+		}
 	}
 
 	class GetDetailDataTask extends AsyncTask<Void, Void, Void> {
@@ -372,11 +373,18 @@ public class DetailActivity extends Activity implements OnClickListener {
 
 				try {
 					JSONObject jRGEO = new JSONObject(oRGEO.toString());
+					String description = jRGEO.getString("description");
+					String province = jRGEO.getString("province");
 					String city = jRGEO.getString("city");
-					String district = jRGEO.getString("district");
-					String street = jRGEO.getString("street");
 
-					mUserHistoryData.mPosName = city + "," + street;
+					mUserHistoryData.mPosName = description.replaceFirst(
+							province, "");
+
+					if (province.equals(city)) {
+						mUserHistoryData.mPosName = city
+								+ mUserHistoryData.mPosName;
+					}
+
 					Loge.i("mUserHistoryData.mPosName = "
 							+ mUserHistoryData.mPosName);
 				} catch (JSONException e) {
