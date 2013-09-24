@@ -153,21 +153,23 @@ public class UserHistoryActivity extends Activity implements
 		UserHistoryData itemData = new UserHistoryData();
 
 		itemData.mPostId = cursor.getString(1);
-		itemData.mText = cursor.getString(2);
-		itemData.mSource = cursor.getString(3);
-		itemData.mOriPic = cursor.getString(4);
-		itemData.mThumbPic = cursor.getString(5);
-		itemData.mTime = cursor.getString(6);
-		itemData.mLat = cursor.getString(7);
-		itemData.mLng = cursor.getString(8);
-		itemData.mDistance = cursor.getString(9);
-		itemData.mLandscapeId = cursor.getLong(10);
+		itemData.mPosName = cursor.getString(2);
+		itemData.mText = cursor.getString(3);
+		itemData.mSource = cursor.getString(4);
+		itemData.mOriPic = cursor.getString(5);
+		itemData.mThumbPic = cursor.getString(6);
+		itemData.mTime = cursor.getString(7);
+		itemData.mLat = cursor.getString(8);
+		itemData.mLng = cursor.getString(9);
+		itemData.mDistance = cursor.getString(10);
+		itemData.mLandscapeId = cursor.getLong(11);
 
 		Intent intent = new Intent();
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
 		Bundle extras = new Bundle();
 		extras.putString(UserHistoryData.KEY_USER_POST_ID, itemData.mPostId);
+		extras.putString(UserHistoryData.KEY_USER_POS_NAME, itemData.mPosName);
 		extras.putString(UserHistoryData.KEY_USER_TEXT, itemData.mText);
 		extras.putString(UserHistoryData.KEY_USER_SOURCE, itemData.mSource);
 		extras.putString(UserHistoryData.KEY_USER_ORIGIN_PIC, itemData.mOriPic);

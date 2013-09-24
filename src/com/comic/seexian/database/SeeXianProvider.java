@@ -48,6 +48,7 @@ public class SeeXianProvider extends ContentProvider {
 
 	public static final String KEY_USER_ID = "_id";
 	public static final String KEY_USER_POST_ID = "postid";
+	public static final String KEY_USER_POS_NAME = "posname";
 	public static final String KEY_USER_TEXT = "text";
 	public static final String KEY_USER_SOURCE = "source";
 	public static final String KEY_USER_ORIGIN_PIC = "image";
@@ -183,10 +184,11 @@ public class SeeXianProvider extends ContentProvider {
 
 			String commandUser = "create table " + DB_TABLE_USER_POST + " ("
 					+ KEY_USER_ID + " integer primary key autoincrement, "
-					+ KEY_USER_POST_ID + " TEXT," + KEY_USER_TEXT + " TEXT,"
-					+ KEY_USER_SOURCE + " TEXT," + KEY_USER_ORIGIN_PIC
-					+ " TEXT, " + KEY_USER_THUMB_PIC + " TEXT, "
-					+ KEY_USER_TIME + " TEXT, " + KEY_USER_LATITUDE + " TEXT, "
+					+ KEY_USER_POST_ID + " TEXT," + KEY_USER_POS_NAME
+					+ " TEXT," + KEY_USER_TEXT + " TEXT," + KEY_USER_SOURCE
+					+ " TEXT," + KEY_USER_ORIGIN_PIC + " TEXT, "
+					+ KEY_USER_THUMB_PIC + " TEXT, " + KEY_USER_TIME
+					+ " TEXT, " + KEY_USER_LATITUDE + " TEXT, "
 					+ KEY_USER_LONGITUDE + " TEXT, "
 					+ KEY_USER_DISATACE_TO_XIAN + " TEXT, "
 					+ KEY_USER_LANDSCAPE_ID + " INTEGER );";

@@ -102,7 +102,6 @@ public class DetailActivity extends Activity implements OnClickListener {
 		LayoutParams params2 = new LayoutParams(LayoutParams.FILL_PARENT,
 				mScreenHeight / 3 - iconSize / 2);
 		landscapeImage.setLayoutParams(params2);
-		landscapeImage.setImageResource(R.drawable.empty_photo);
 
 		LayoutParams params3 = new LayoutParams(LayoutParams.WRAP_CONTENT,
 				LayoutParams.WRAP_CONTENT);
@@ -131,6 +130,8 @@ public class DetailActivity extends Activity implements OnClickListener {
 
 		mUserHistoryData.mPostId = extras
 				.getString(UserHistoryData.KEY_USER_POST_ID);
+		mUserHistoryData.mPosName = extras
+				.getString(UserHistoryData.KEY_USER_POS_NAME);
 		mUserHistoryData.mText = extras
 				.getString(UserHistoryData.KEY_USER_TEXT);
 		mUserHistoryData.mSource = extras
@@ -200,6 +201,13 @@ public class DetailActivity extends Activity implements OnClickListener {
 
 		linkButton.setOnClickListener(this);
 
+		if (mUserHistoryData.mPosName != null
+				&& !mUserHistoryData.mPosName.isEmpty()) {
+			nameText.setText(mUserHistoryData.mPosName);
+		} else {
+			nameText.setText("...");
+		}
+
 		if (mUserHistoryData.mDistance == null
 				|| mUserHistoryData.mDistance.isEmpty()) {
 			distancePanel.setVisibility(View.GONE);
@@ -217,6 +225,7 @@ public class DetailActivity extends Activity implements OnClickListener {
 						R.string.kilometer));
 
 				distanceText.setText(distanseSB.toString());
+				distancePanel.setVisibility(View.VISIBLE);
 			} else {
 				distancePanel.setVisibility(View.GONE);
 			}
@@ -320,14 +329,72 @@ public class DetailActivity extends Activity implements OnClickListener {
 		@Override
 		protected Void doInBackground(Void... paramArrayOfParams) {
 			mUserInfo = AccessTokenKeeper.readUserInfo(mCtx);
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			setDetailData();
+			new GetDetailDataNetTask().execute(null);
+			super.onPostExecute(result);
+		}
+
+	}
+
+	class GetDetailDataNetTask extends AsyncTask<Void, Void, String> {
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+		}
+
+		@Override
+		protected String doInBackground(Void... paramArrayOfParams) {
+			if (!SeeXianUtils.isNetworkAvailable(mCtx)) {
+				return null;
+			}
+
+			ContentResolver resolver = mCtx.getContentResolver();
+
+			if (mUserHistoryData.mPosName == null
+					|| mUserHistoryData.mPosName.isEmpty()) {
+				HashMap<String, Object> queryParams = new HashMap<String, Object>();
+				queryParams.put("ak", Constants.BAIDU_MAP_SERVICE_KEY);
+				StringBuilder location = new StringBuilder();
+				location.append(mUserHistoryData.mLng);
+				location.append(",");
+				location.append(mUserHistoryData.mLat);
+				queryParams.put("location", location.toString());
+				queryParams.put("output", "json");
+				Object oRGEO = SeeXianNetUtils
+						.getResult(
+								"http://api.map.baidu.com/telematics/v3/reverseGeocoding",
+								queryParams, null);
+
+				try {
+					JSONObject jRGEO = new JSONObject(oRGEO.toString());
+					String city = jRGEO.getString("city");
+					String district = jRGEO.getString("district");
+					String street = jRGEO.getString("street");
+
+					mUserHistoryData.mPosName = city + "," + street;
+					Loge.i("mUserHistoryData.mPosName = "
+							+ mUserHistoryData.mPosName);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+
+				ContentValues updatedValues = new ContentValues();
+				updatedValues.put(SeeXianProvider.KEY_USER_POS_NAME,
+						mUserHistoryData.mPosName);
+
+				String where = SeeXianProvider.KEY_USER_POST_ID + "='"
+						+ mUserHistoryData.mPostId + "'";
+				resolver.update(SeeXianProvider.CONTENT_URI_SEE_XIAN_USER_POST,
+						updatedValues, where, null);
+			}
 
 			if (mUserHistoryData.mDistance == null
 					|| mUserHistoryData.mDistance.isEmpty()) {
-
-				if (!SeeXianUtils.isNetworkAvailable(mCtx)) {
-					return null;
-				}
-
 				HashMap<String, Object> queryParams = new HashMap<String, Object>();
 				queryParams.put("ak", Constants.BAIDU_MAP_SERVICE_KEY);
 				StringBuilder waypoints = new StringBuilder();
@@ -359,8 +426,6 @@ public class DetailActivity extends Activity implements OnClickListener {
 				}
 				mUserHistoryData.mDistance = distance;
 
-				ContentResolver resolver = mCtx.getContentResolver();
-
 				ContentValues updatedValues = new ContentValues();
 				updatedValues.put(SeeXianProvider.KEY_USER_DISATACE_TO_XIAN,
 						distance);
@@ -369,15 +434,16 @@ public class DetailActivity extends Activity implements OnClickListener {
 						+ mUserHistoryData.mPostId + "'";
 				resolver.update(SeeXianProvider.CONTENT_URI_SEE_XIAN_USER_POST,
 						updatedValues, where, null);
-
 			}
 
-			return null;
+			return "ok";
 		}
 
 		@Override
-		protected void onPostExecute(Void result) {
-			setDetailData();
+		protected void onPostExecute(String result) {
+			if (result != null) {
+				setDetailData();
+			}
 			super.onPostExecute(result);
 		}
 

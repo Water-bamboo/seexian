@@ -73,9 +73,9 @@ public class UserHistoryAdapter extends CursorAdapter {
 
 			UserHistoryData data = new UserHistoryData();
 
-			data.mOriPic = cursor.getString(4);
-			data.mThumbPic = cursor.getString(5);
-			data.mTime = cursor.getString(6);
+			data.mOriPic = cursor.getString(5);
+			data.mThumbPic = cursor.getString(6);
+			data.mTime = cursor.getString(7);
 
 			holder.text.setText(data.mTime);
 
