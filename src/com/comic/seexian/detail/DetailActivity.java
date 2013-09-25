@@ -31,6 +31,7 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.comic.seexian.Constants;
@@ -73,7 +74,8 @@ public class DetailActivity extends Activity implements OnClickListener {
 	private float mDistanceToXian;
 
 	private AroundGridView mAroundGrid = null;
-	private ImageButton mAroundRefresh = null;
+	private ImageButton mAroundRefreshButton = null;
+	private ProgressBar mAroundRefreshProgress = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +102,8 @@ public class DetailActivity extends Activity implements OnClickListener {
 		distanceText = (TextView) findViewById(R.id.distance_text);
 
 		mAroundGrid = (AroundGridView) findViewById(R.id.detail_grid);
-		mAroundRefresh = (ImageButton) findViewById(R.id.around_refresh);
+		mAroundRefreshButton = (ImageButton) findViewById(R.id.around_refresh_button);
+		mAroundRefreshProgress = (ProgressBar) findViewById(R.id.around_refresh_progress);
 
 		int iconSize = mSreenWidth / 4;
 		LayoutParams params1 = new LayoutParams(iconSize, iconSize);
@@ -127,7 +130,7 @@ public class DetailActivity extends Activity implements OnClickListener {
 				content_margin);
 		mMapView.setLayoutParams(params4);
 
-		mAroundRefresh.setOnClickListener(refreshClicked);
+		mAroundRefreshButton.setOnClickListener(refreshClicked);
 
 		getDataFromExtra();
 
@@ -138,6 +141,8 @@ public class DetailActivity extends Activity implements OnClickListener {
 
 		@Override
 		public void onClick(View v) {
+			mAroundRefreshButton.setVisibility(View.INVISIBLE);
+			mAroundRefreshProgress.setVisibility(View.VISIBLE);
 		}
 	};
 

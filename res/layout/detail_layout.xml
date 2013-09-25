@@ -127,16 +127,28 @@
                 android:stretchMode="columnWidth"
                 android:verticalSpacing="5dp" />
 
-            <ImageButton
-                android:id="@+id/around_refresh"
+            <FrameLayout
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="@dimen/content_margin"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/wiki_pic_name"
-                android:src="@drawable/refresh"
-                android:scaleType="centerInside" />
+                android:layout_marginBottom="@dimen/content_margin" >
+
+                <ImageButton
+                    android:id="@+id/around_refresh_button"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/wiki_pic_name"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/refresh" />
+
+                <ProgressBar
+                    android:id="@+id/around_refresh_progress"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:indeterminate="true"
+                    android:visibility="invisible" />
+            </FrameLayout>
         </LinearLayout>
     </LinearLayout>
 
