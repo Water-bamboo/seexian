@@ -47,54 +47,56 @@ public class ShrinkImageButton extends ImageButton {
 		shrink = Bitmap.createScaledBitmap(origin, w - SHRINK_SIZE, h
 				- SHRINK_SIZE, true);
 	}
+
 	@Override
 	protected void onDraw(Canvas canvas) {
 		switch (state) {
-			case MotionEvent.ACTION_DOWN :
-				switch (shrinkSide) {
-					case 0 :
-						canvas.drawBitmap(shrink, SHRINK_SIZE, SHRINK_SIZE,
-								null);
-						break;
-					case 1 :
-						canvas.drawBitmap(shrink, 0, SHRINK_SIZE, null);
-						break;
-					case 2 :
-						canvas.drawBitmap(shrink, SHRINK_SIZE, 0, null);
-						break;
-					case 3 :
-						canvas.drawBitmap(shrink, 0, 0, null);
-						break;
-					case 4 :
-						canvas.drawBitmap(shrink, SHRINK_SIZE / 2,
-								SHRINK_SIZE / 2, null);
-						break;
-					default :
-						break;
-				}
+		case MotionEvent.ACTION_DOWN:
+			switch (shrinkSide) {
+			case 0:
+				canvas.drawBitmap(shrink, SHRINK_SIZE, SHRINK_SIZE, null);
 				break;
-			case MotionEvent.ACTION_UP :
-				canvas.drawBitmap(fit, 0, 0, null);
+			case 1:
+				canvas.drawBitmap(shrink, 0, SHRINK_SIZE, null);
 				break;
-			default :
+			case 2:
+				canvas.drawBitmap(shrink, SHRINK_SIZE, 0, null);
 				break;
+			case 3:
+				canvas.drawBitmap(shrink, 0, 0, null);
+				break;
+			case 4:
+				canvas.drawBitmap(shrink, SHRINK_SIZE / 2, SHRINK_SIZE / 2,
+						null);
+				break;
+			default:
+				break;
+			}
+			break;
+		case MotionEvent.ACTION_OUTSIDE:
+		case MotionEvent.ACTION_UP:
+			canvas.drawBitmap(fit, 0, 0, null);
+			break;
+		default:
+			break;
 		}
 
 	}
+
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		int eventCode = event.getAction();
 		switch (eventCode) {
-			case MotionEvent.ACTION_DOWN :
-				state = MotionEvent.ACTION_DOWN;
-				invalidate();
-				break;
-			case MotionEvent.ACTION_UP :
-				state = MotionEvent.ACTION_UP;
-				invalidate();
-				break;
-			default :
-				break;
+		case MotionEvent.ACTION_DOWN:
+			state = MotionEvent.ACTION_DOWN;
+			invalidate();
+			break;
+		case MotionEvent.ACTION_UP:
+			state = MotionEvent.ACTION_UP;
+			invalidate();
+			break;
+		default:
+			break;
 		}
 		return super.onTouchEvent(event);
 	}
