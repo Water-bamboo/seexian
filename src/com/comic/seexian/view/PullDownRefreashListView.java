@@ -63,6 +63,7 @@ public class PullDownRefreashListView extends ListView {
 	private OnItemLongClickListener onItemLongClickListener;
 	private OnRefreshListener onRefreshListener;
 
+	private View mRefreshHorizontalView;
 	private View mRefreshHorizontalImage;
 	private View mRefreshHorizontalProgress;
 	private int mHalfSreenWidth;
@@ -86,8 +87,9 @@ public class PullDownRefreashListView extends ListView {
 		init(context);
 	}
 
-	public void addCustomView(View refreshHorizontalImage,
-			View refreshHorizontalProgress) {
+	public void addCustomView(View refreshHorizontalView,
+			View refreshHorizontalImage, View refreshHorizontalProgress) {
+		mRefreshHorizontalView = refreshHorizontalView;
 		mRefreshHorizontalImage = refreshHorizontalImage;
 		mRefreshHorizontalProgress = refreshHorizontalProgress;
 		mRefreshHorizontalImage.setPadding(mHalfSreenWidth, 0, mHalfSreenWidth,
@@ -157,6 +159,7 @@ public class PullDownRefreashListView extends ListView {
 		state = State.PULL_TO_REFRESH;
 		resetHeader();
 
+		mRefreshHorizontalView.setVisibility(View.GONE);
 		mRefreshHorizontalImage.setVisibility(View.VISIBLE);
 		mRefreshHorizontalProgress.setVisibility(View.GONE);
 		mRefreshHorizontalImage.setPadding(mHalfSreenWidth, 0, mHalfSreenWidth,
@@ -250,6 +253,7 @@ public class PullDownRefreashListView extends ListView {
 
 			int padding = (int) ((historicalY - mScrollStartY) / 1.2);
 
+			mRefreshHorizontalView.setVisibility(View.VISIBLE);
 			if (!(padding > mHalfSreenWidth)) {
 				mRefreshHorizontalImage.setPadding(mHalfSreenWidth - padding,
 						0, mHalfSreenWidth - padding, 0);
@@ -350,6 +354,7 @@ public class PullDownRefreashListView extends ListView {
 
 		startAnimation(bounceAnimation);
 
+		mRefreshHorizontalView.setVisibility(View.VISIBLE);
 		mRefreshHorizontalImage.setPadding(mHalfSreenWidth, 0, mHalfSreenWidth,
 				0);
 	}

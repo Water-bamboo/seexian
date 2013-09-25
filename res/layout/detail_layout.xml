@@ -52,7 +52,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/wiki_pic_name"
-                android:src="@drawable/baidu_logo"
+                android:src="@drawable/search"
                 shrink:shinkSide="center" />
         </FrameLayout>
 

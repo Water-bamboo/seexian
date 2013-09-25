@@ -127,7 +127,7 @@ public class UserHistoryActivity extends Activity implements
 		mListAdapter = new UserHistoryAdapter(this, null);
 		mListView.setAdapter(mListAdapter);
 		mListView.setOnItemClickListener(this);
-		mListView.addCustomView(mRefreshHorizontalImage,
+		mListView.addCustomView(mRefreshViewInside, mRefreshHorizontalImage,
 				mRefreshHorizontalProgress);
 		mListView.setOnCreateContextMenuListener(this);
 		mListView.setOnItemLongClickListener(this);
