@@ -127,7 +127,7 @@
                 android:stretchMode="columnWidth"
                 android:verticalSpacing="5dp" />
 
-            <com.comic.seexian.view.ShrinkImageButton
+            <ImageButton
                 android:id="@+id/around_refresh"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
@@ -136,7 +136,7 @@
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/wiki_pic_name"
                 android:src="@drawable/refresh"
-                shrink:shinkSide="center" />
+                android:scaleType="centerInside" />
         </LinearLayout>
     </LinearLayout>
 

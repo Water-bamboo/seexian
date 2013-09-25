@@ -27,6 +27,8 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -70,6 +72,9 @@ public class DetailActivity extends Activity implements OnClickListener {
 
 	private float mDistanceToXian;
 
+	private AroundGridView mAroundGrid = null;
+	private ImageButton mAroundRefresh = null;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -93,6 +98,9 @@ public class DetailActivity extends Activity implements OnClickListener {
 
 		distancePanel = (View) findViewById(R.id.distance_panel);
 		distanceText = (TextView) findViewById(R.id.distance_text);
+
+		mAroundGrid = (AroundGridView) findViewById(R.id.detail_grid);
+		mAroundRefresh = (ImageButton) findViewById(R.id.around_refresh);
 
 		int iconSize = mSreenWidth / 4;
 		LayoutParams params1 = new LayoutParams(iconSize, iconSize);
@@ -119,10 +127,19 @@ public class DetailActivity extends Activity implements OnClickListener {
 				content_margin);
 		mMapView.setLayoutParams(params4);
 
+		mAroundRefresh.setOnClickListener(refreshClicked);
+
 		getDataFromExtra();
 
 		Loge.i("onCreate 4");
 	}
+
+	private View.OnClickListener refreshClicked = new View.OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+		}
+	};
 
 	private void getDataFromExtra() {
 		Intent dataIntent = getIntent();
@@ -320,6 +337,8 @@ public class DetailActivity extends Activity implements OnClickListener {
 			startActivity(intent);
 		}
 	}
+
+	// -----------------------------------------------------------------------------------------------------------------------------
 
 	class GetDetailDataTask extends AsyncTask<Void, Void, Void> {
 		@Override
