@@ -362,6 +362,8 @@ public class DetailActivity extends Activity implements OnClickListener {
 		protected void onPostExecute(Void result) {
 			setDetailData();
 			new GetDetailDataNetTask().execute(null);
+			new GetAroundNetTask().execute(mUserHistoryData.mLat,
+					mUserHistoryData.mLng);
 			super.onPostExecute(result);
 		}
 
@@ -483,8 +485,6 @@ public class DetailActivity extends Activity implements OnClickListener {
 			if (result != null) {
 				setDetailData();
 			}
-			new GetAroundNetTask().execute(mUserHistoryData.mLat,
-					mUserHistoryData.mLng);
 			super.onPostExecute(result);
 		}
 
@@ -599,16 +599,10 @@ public class DetailActivity extends Activity implements OnClickListener {
 					AroundData aData = new AroundData();
 
 					aData.mName = jAddInfo.getString("name");
-					Loge.i("GetAroundNetTask mName = " + aData.mName);
 					aData.mPrice = jAddInfo.getString("price");
-					Loge.i("GetAroundNetTask mPrice = " + aData.mPrice);
 					aData.mTel = jAddInfo.getString("telepnone");
-					Loge.i("GetAroundNetTask mTel = " + aData.mTel);
 					aData.mAddress = jAddInfo.getString("address");
-					Loge.i("GetAroundNetTask mAddress = " + aData.mAddress);
 					aData.mDescription = jAddInfo.getString("tag");
-					Loge.i("GetAroundNetTask mDescription = "
-							+ aData.mDescription);
 
 					StringBuilder linkNameSB = new StringBuilder();
 					StringBuilder linkAddressSB = new StringBuilder();
@@ -623,8 +617,7 @@ public class DetailActivity extends Activity implements OnClickListener {
 							JSONObject jLinkItem = aLink.getJSONObject(j);
 							String linkName = jLinkItem.getString("name");
 							String linkAddress = jLinkItem.getString("url");
-							Loge.i("GetAroundNetTask linkName = " + linkName
-									+ " linkAddress = " + linkAddress);
+
 							linkNameSB.append(linkName);
 							linkAddressSB.append(linkAddress);
 						}
