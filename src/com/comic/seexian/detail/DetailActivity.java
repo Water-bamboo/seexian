@@ -75,6 +75,7 @@ public class DetailActivity extends Activity implements OnClickListener {
 	private ImageButton mAroundRefreshButton = null;
 	private AroundGridAdapter mAroundGridAdapter = null;
 	private ProgressBar mAroundRefreshProgress = null;
+	private View mAroundLoadingView = null;
 
 	private ArrayList<AroundData> aroundListData = new ArrayList<AroundData>();
 
@@ -100,6 +101,7 @@ public class DetailActivity extends Activity implements OnClickListener {
 		distancePanel = (View) findViewById(R.id.distance_panel);
 		distanceText = (TextView) findViewById(R.id.distance_text);
 
+		mAroundLoadingView = (View) findViewById(R.id.around_refresh_view);
 		mAroundGrid = (GridView) findViewById(R.id.detail_grid);
 		mAroundRefreshButton = (ImageButton) findViewById(R.id.around_refresh_button);
 		mAroundRefreshProgress = (ProgressBar) findViewById(R.id.around_refresh_progress);
@@ -573,6 +575,7 @@ public class DetailActivity extends Activity implements OnClickListener {
 			mAroundRefreshProgress.setVisibility(View.GONE);
 
 			if (result != null) {
+				mAroundLoadingView.setVisibility(View.GONE);
 				mAroundRefreshButton.setVisibility(View.GONE);
 				mAroundGrid.setVisibility(View.VISIBLE);
 				mAroundGridAdapter.setListData(aroundListData);
