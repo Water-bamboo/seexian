@@ -200,8 +200,10 @@ public class ImageUploadDialog extends Dialog {
 				Object locationInfo = SeeXianNetUtils.getResult(
 						"https://api.weibo.com/2/place/nearby/pois.json",
 						params, acctoken);
-				locationData.addAll(SeeXianNetUtils
-						.getLocationPoisData(locationInfo));
+				if(locationInfo != null){
+					locationData.addAll(SeeXianNetUtils
+							.getLocationPoisData(locationInfo));
+				}
 
 				if (locationData.size() > 0) {
 					mSelectedItem = locationData.get(0);

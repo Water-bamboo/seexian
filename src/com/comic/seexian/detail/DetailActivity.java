@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.json.JSONArray;
@@ -27,9 +28,8 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout.LayoutParams;
+import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -46,6 +46,8 @@ import com.comic.seexian.utils.SeeXianNetUtils;
 import com.comic.seexian.utils.SeeXianUtils;
 
 public class DetailActivity extends Activity implements OnClickListener {
+
+	private static final String[] interestSpot = { "景点", "小吃", "住宿" };
 
 	private static final int MESSAGE_GET_DATA_FINISHED = 102;
 
@@ -65,17 +67,16 @@ public class DetailActivity extends Activity implements OnClickListener {
 
 	private ImageButton linkButton = null;
 
-	private Drawable mLandscapeImage;
-
 	private UserHistoryData mUserHistoryData = new UserHistoryData();
 
 	private UserInfo mUserInfo = null;
 
-	private float mDistanceToXian;
-
-	private AroundGridView mAroundGrid = null;
+	private GridView mAroundGrid = null;
 	private ImageButton mAroundRefreshButton = null;
+	private AroundGridAdapter mAroundGridAdapter = null;
 	private ProgressBar mAroundRefreshProgress = null;
+
+	private ArrayList<AroundData> aroundListData = new ArrayList<AroundData>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -89,8 +90,6 @@ public class DetailActivity extends Activity implements OnClickListener {
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		mScreenHeight = dm.heightPixels;
 		mSreenWidth = dm.widthPixels;
-		Loge.d("ScreenHeight = " + mScreenHeight);
-		Loge.d("SreenWidth = " + mSreenWidth);
 
 		landscapeImage = (PhotoView) findViewById(R.id.landscape_pic);
 		IconImage = (PhotoView) findViewById(R.id.icon_pic);
@@ -101,9 +100,12 @@ public class DetailActivity extends Activity implements OnClickListener {
 		distancePanel = (View) findViewById(R.id.distance_panel);
 		distanceText = (TextView) findViewById(R.id.distance_text);
 
-		mAroundGrid = (AroundGridView) findViewById(R.id.detail_grid);
+		mAroundGrid = (GridView) findViewById(R.id.detail_grid);
 		mAroundRefreshButton = (ImageButton) findViewById(R.id.around_refresh_button);
 		mAroundRefreshProgress = (ProgressBar) findViewById(R.id.around_refresh_progress);
+
+		mAroundGridAdapter = new AroundGridAdapter(this);
+		mAroundGrid.setAdapter(mAroundGridAdapter);
 
 		int iconSize = mSreenWidth / 4;
 		LayoutParams params1 = new LayoutParams(iconSize, iconSize);
@@ -133,16 +135,13 @@ public class DetailActivity extends Activity implements OnClickListener {
 		mAroundRefreshButton.setOnClickListener(refreshClicked);
 
 		getDataFromExtra();
-
-		Loge.i("onCreate 4");
 	}
 
 	private View.OnClickListener refreshClicked = new View.OnClickListener() {
 
 		@Override
 		public void onClick(View v) {
-			mAroundRefreshButton.setVisibility(View.INVISIBLE);
-			mAroundRefreshProgress.setVisibility(View.VISIBLE);
+
 		}
 	};
 
@@ -394,7 +393,9 @@ public class DetailActivity extends Activity implements OnClickListener {
 						.getResult(
 								"http://api.map.baidu.com/telematics/v3/reverseGeocoding",
 								queryParams, null);
-
+				if (oRGEO == null) {
+					return null;
+				}
 				try {
 					JSONObject jRGEO = new JSONObject(oRGEO.toString());
 					String description = jRGEO.getString("description");
@@ -444,6 +445,10 @@ public class DetailActivity extends Activity implements OnClickListener {
 						queryParams, null);
 
 				String distance = null;
+
+				if (oDistance == null) {
+					return null;
+				}
 				try {
 					JSONObject jDistance = new JSONObject(oDistance.toString());
 					JSONArray resultJArray = jDistance.getJSONArray("results");
@@ -476,9 +481,163 @@ public class DetailActivity extends Activity implements OnClickListener {
 			if (result != null) {
 				setDetailData();
 			}
+			new GetAroundNetTask().execute(mUserHistoryData.mLat,
+					mUserHistoryData.mLng);
 			super.onPostExecute(result);
 		}
 
+	}
+
+	class GetAroundNetTask extends AsyncTask<String, Void, String> {
+
+		@Override
+		protected void onPreExecute() {
+			mAroundGrid.setVisibility(View.GONE);
+			mAroundRefreshButton.setVisibility(View.GONE);
+			mAroundRefreshProgress.setVisibility(View.VISIBLE);
+			aroundListData.clear();
+			super.onPreExecute();
+		}
+
+		@Override
+		protected String doInBackground(String... params) {
+
+			String lat = null;
+			String lng = null;
+			if (params.length >= 2) {
+				lat = params[0];
+				lng = params[1];
+			}
+			Loge.i("GetAroundNetTask lat = " + lat + " lng = " + lng);
+
+			for (String item : interestSpot) {
+
+				if (!SeeXianUtils.isNetworkAvailable(mCtx)) {
+					return null;
+				}
+
+				HashMap<String, Object> queryParams = new HashMap<String, Object>();
+				queryParams.put("ak", Constants.BAIDU_MAP_SERVICE_KEY);
+				StringBuilder location = new StringBuilder();
+				location.append(lng);
+				location.append(",");
+				location.append(lat);
+				queryParams.put("location", location.toString());
+				queryParams.put("keyWord", item);
+				queryParams.put("output", "json");
+				Object oLocal = SeeXianNetUtils.getResult(
+						"http://api.map.baidu.com/telematics/v3/local",
+						queryParams, null);
+				if (oLocal == null) {
+					break;
+				}
+				phaseInterestInfo(oLocal);
+
+			}
+
+			Loge.i("GetAroundNetTask aroundListData size = "
+					+ aroundListData.size());
+			if (aroundListData.size() < 25) {
+				int addSize = 25 - aroundListData.size();
+				for (int i = 0; i < addSize; i++) {
+					AroundData aData = new AroundData();
+					aData.mName = "";
+					aroundListData.add(aData);
+				}
+			}
+			Loge.i("GetAroundNetTask aroundListData size = "
+					+ aroundListData.size());
+
+			// random sort the aroundListData
+			ArrayList<AroundData> tempAroundListData = new ArrayList<AroundData>();
+			for (int i = 0; i < 25; i++) {
+				int num = (int) (Math.round(Math.random() * (24 - i)));
+				Loge.i("GetAroundNetTask random = " + num);
+				if (num < aroundListData.size()) {
+					tempAroundListData.add(aroundListData.get(num));
+					aroundListData.remove(num);
+				}
+			}
+
+			aroundListData.addAll(tempAroundListData);
+			if (aroundListData.size() > 0) {
+				return "ok";
+			} else {
+				return null;
+			}
+
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			mAroundRefreshProgress.setVisibility(View.GONE);
+
+			if (result != null) {
+				mAroundRefreshButton.setVisibility(View.GONE);
+				mAroundGrid.setVisibility(View.VISIBLE);
+				mAroundGridAdapter.setListData(aroundListData);
+			} else {
+				mAroundRefreshButton.setVisibility(View.VISIBLE);
+				mAroundGrid.setVisibility(View.GONE);
+			}
+			super.onPostExecute(result);
+		}
+
+		void phaseInterestInfo(Object oInfo) {
+			try {
+				JSONObject jInfo = new JSONObject(oInfo.toString());
+				JSONArray aPointList = jInfo.getJSONArray("pointList");
+
+				for (int i = 0; i < aPointList.length(); i++) {
+					JSONObject jItem = aPointList.getJSONObject(i);
+					JSONObject jAddInfo = jItem
+							.getJSONObject("additionalInformation");
+
+					AroundData aData = new AroundData();
+
+					aData.mName = jAddInfo.getString("name");
+					Loge.i("GetAroundNetTask mName = " + aData.mName);
+					aData.mPrice = jAddInfo.getString("price");
+					Loge.i("GetAroundNetTask mPrice = " + aData.mPrice);
+					aData.mTel = jAddInfo.getString("telepnone");
+					Loge.i("GetAroundNetTask mTel = " + aData.mTel);
+					aData.mAddress = jAddInfo.getString("address");
+					Loge.i("GetAroundNetTask mAddress = " + aData.mAddress);
+					aData.mDescription = jAddInfo.getString("tag");
+					Loge.i("GetAroundNetTask mDescription = "
+							+ aData.mDescription);
+
+					StringBuilder linkNameSB = new StringBuilder();
+					StringBuilder linkAddressSB = new StringBuilder();
+					try {
+						JSONArray aLink = jAddInfo.getJSONArray("link");
+						for (int j = 0; j < aLink.length(); j++) {
+							if (j != 0) {
+								linkNameSB.append("\0");
+								linkAddressSB.append("\0");
+							}
+
+							JSONObject jLinkItem = aLink.getJSONObject(j);
+							String linkName = jLinkItem.getString("name");
+							String linkAddress = jLinkItem.getString("url");
+							Loge.i("GetAroundNetTask linkName = " + linkName
+									+ " linkAddress = " + linkAddress);
+							linkNameSB.append(linkName);
+							linkAddressSB.append(linkAddress);
+						}
+						aData.mProvider = linkNameSB.toString();
+						aData.mLinkUrl = linkAddressSB.toString();
+					} catch (JSONException e) {
+						Loge.e(e.getMessage());
+					}
+
+					aroundListData.add(aData);
+				}
+
+			} catch (JSONException e) {
+				Loge.e(e.getMessage());
+			}
+		}
 	}
 
 }

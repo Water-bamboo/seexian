@@ -31,14 +31,13 @@ public class SeeXianProvider extends ContentProvider {
 
 	public static final String KEY_ID = "_id";
 	public static final String KEY_NAME = "name";
+	public static final String KEY_PRICE = "price";
 	public static final String KEY_DESCRIPTION = "description";
-	public static final String KEY_DETAIL = "detail";
 	public static final String KEY_ICON = "icon";
-	public static final String KEY_IMAGE = "image";
+	public static final String KEY_TEL = "telepnone";
+	public static final String KEY_ADDRESS = "address";
 	public static final String KEY_LINK_URL = "link";
 	public static final String KEY_PROIVDER = "provider";
-	public static final String KEY_LATITUDE = "latitude";
-	public static final String KEY_LONGITUDE = "longitude";
 
 	/** Name of table in the database */
 	private static final String DB_TABLE_USER_POST = "userdata";
@@ -174,11 +173,10 @@ public class SeeXianProvider extends ContentProvider {
 		public void onCreate(SQLiteDatabase db) {
 			String commandLandscape = "create table " + DB_TABLE_LANDSCAPE
 					+ " (" + KEY_ID + " integer primary key autoincrement, "
-					+ KEY_NAME + " TEXT," + KEY_DESCRIPTION + " TEXT,"
-					+ KEY_DETAIL + " TEXT," + KEY_ICON + " TEXT, " + KEY_IMAGE
-					+ " TEXT, " + KEY_LINK_URL + " TEXT, " + KEY_LATITUDE
-					+ " TEXT, " + KEY_LONGITUDE + " TEXT, " + KEY_PROIVDER
-					+ " TEXT );";
+					+ KEY_NAME + " TEXT," + KEY_PRICE + " TEXT,"
+					+ KEY_DESCRIPTION + " TEXT," + KEY_ICON + " TEXT, "
+					+ KEY_TEL + " TEXT, " + KEY_ADDRESS + " TEXT, "
+					+ KEY_LINK_URL + " TEXT, " + KEY_PROIVDER + " TEXT );";
 			Loge.v("create database Landscape = " + commandLandscape);
 			db.execSQL(commandLandscape);
 

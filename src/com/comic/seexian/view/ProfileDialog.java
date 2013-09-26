@@ -200,9 +200,11 @@ public class ProfileDialog extends Dialog {
 							null, acctoken);
 					AccessTokenKeeper.clear(mCtx);
 				}
-				
+
 				ContentResolver contentResolver = mCtx.getContentResolver();
-				contentResolver.delete(SeeXianProvider.CONTENT_URI_SEE_XIAN_USER_POST, null, null);
+				contentResolver.delete(
+						SeeXianProvider.CONTENT_URI_SEE_XIAN_USER_POST, null,
+						null);
 
 				if (mDataHandler != null) {
 					mDataHandler.sendEmptyMessage(MESSAGE_LOGOUT_SUCESS);

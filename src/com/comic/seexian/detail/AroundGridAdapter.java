@@ -1,5 +1,7 @@
 package com.comic.seexian.detail;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -19,6 +21,8 @@ public class AroundGridAdapter extends BaseAdapter {
 
 	private static final int[] colorList = { 0xFF31c2d4, 0xFF554087, 0xFFae4ea5 };
 
+	private ArrayList<AroundData> aroundListData = new ArrayList<AroundData>();
+
 	static class ViewHolder {
 		PhotoView icon;
 	}
@@ -31,7 +35,7 @@ public class AroundGridAdapter extends BaseAdapter {
 
 	@Override
 	public int getCount() {
-		return 25;
+		return aroundListData.size();
 	}
 
 	@Override
@@ -63,16 +67,19 @@ public class AroundGridAdapter extends BaseAdapter {
 		int size = mContext.getResources().getDimensionPixelSize(
 				R.dimen.grid_item_height);
 
+		AroundData itemData = aroundListData.get(position);
+
 		TextView tempTextView = new TextView(mContext);
 		tempTextView.setHeight(size);
 		tempTextView.setWidth(size);
 		tempTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-		tempTextView.setText("老孙家" + position);
+		tempTextView.setText(itemData.mName);
 		tempTextView.setDrawingCacheEnabled(true);
 		tempTextView.measure(size, size);
 		tempTextView.layout(0, 0, size, size);
 		tempTextView.setTextColor(Color.WHITE);
 		tempTextView.setGravity(Gravity.CENTER);
+		tempTextView.setMaxLines(2);
 
 		int num = (int) (Math.round(Math.random() * (colorList.length - 1)));
 		if (num < colorList.length) {
@@ -87,6 +94,11 @@ public class AroundGridAdapter extends BaseAdapter {
 
 		holder.icon.setImageBitmap(bm);
 		return convertView;
+	}
+
+	void setListData(ArrayList<AroundData> listData) {
+		aroundListData.clear();
+		aroundListData.addAll(listData);
 	}
 
 }

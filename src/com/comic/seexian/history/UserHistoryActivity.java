@@ -331,6 +331,9 @@ public class UserHistoryActivity extends Activity implements
 			Object userPostInfo = SeeXianNetUtils.getResult(
 					"https://api.weibo.com/2/statuses/user_timeline.json",
 					queryParams, acctoken);
+			if (userPostInfo == null) {
+				return null;
+			}
 			ArrayList<UserHistoryData> tempListData = new ArrayList<UserHistoryData>();
 			tempListData.addAll(SeeXianNetUtils
 					.getUserHistoryData(userPostInfo));
