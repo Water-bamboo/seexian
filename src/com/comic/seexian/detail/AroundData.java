@@ -11,6 +11,7 @@ public class AroundData {
 	public static final String KEY_ADDRESS = "address";
 	public static final String KEY_LINK_URL = "link";
 	public static final String KEY_PROIVDER = "provider";
+	public static final String KEY_POST_ID = "postid";
 
 	public String mName;
 	public String mPrice;
@@ -20,4 +21,5 @@ public class AroundData {
 	public String mAddress;
 	public String mLinkUrl;
 	public String mProvider;
+	public String mPostId;
 }

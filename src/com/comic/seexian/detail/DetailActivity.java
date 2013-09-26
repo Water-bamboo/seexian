@@ -14,10 +14,13 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.SearchManager;
+import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.OperationApplicationException;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -25,6 +28,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -512,8 +516,38 @@ public class DetailActivity extends Activity implements OnClickListener {
 			}
 			Loge.i("GetAroundNetTask lat = " + lat + " lng = " + lng);
 
-			for (String item : interestSpot) {
+			ContentResolver resolver = mCtx.getContentResolver();
 
+			String where = SeeXianProvider.KEY_POST_ID + "='"
+					+ mUserHistoryData.mPostId + "'";
+			Cursor cursor = resolver.query(
+					SeeXianProvider.CONTENT_URI_SEE_XIAN_LANDSCAPE, null,
+					where, null, null);
+			if (cursor != null) {
+				if (cursor.moveToFirst()) {
+					do {
+						AroundData aData = new AroundData();
+						aData.mName = cursor.getString(1);
+						aData.mPrice = cursor.getString(2);
+						aData.mDescription = cursor.getString(3);
+						aData.mIcon = cursor.getString(4);
+						aData.mTel = cursor.getString(5);
+						aData.mAddress = cursor.getString(6);
+						aData.mLinkUrl = cursor.getString(7);
+						aData.mProvider = cursor.getString(8);
+						aroundListData.add(aData);
+					} while (cursor.moveToNext());
+				}
+				cursor.close();
+			}
+
+			if (aroundListData.size() == 25) {
+				return "ok";
+			} else {
+				aroundListData.clear();
+			}
+
+			for (String item : interestSpot) {
 				if (!SeeXianUtils.isNetworkAvailable(mCtx)) {
 					return null;
 				}
@@ -554,7 +588,6 @@ public class DetailActivity extends Activity implements OnClickListener {
 			ArrayList<AroundData> tempAroundListData = new ArrayList<AroundData>();
 			for (int i = 0; i < 25; i++) {
 				int num = (int) (Math.round(Math.random() * (24 - i)));
-				Loge.i("GetAroundNetTask random = " + num);
 				if (num < aroundListData.size()) {
 					tempAroundListData.add(aroundListData.get(num));
 					aroundListData.remove(num);
@@ -562,6 +595,36 @@ public class DetailActivity extends Activity implements OnClickListener {
 			}
 
 			aroundListData.addAll(tempAroundListData);
+			tempAroundListData.clear();
+
+			ArrayList<ContentProviderOperation> opertions = new ArrayList<ContentProviderOperation>();
+
+			for (AroundData item : aroundListData) {
+				ContentProviderOperation.Builder builder = ContentProviderOperation
+						.newInsert(
+								SeeXianProvider.CONTENT_URI_SEE_XIAN_LANDSCAPE)
+						.withValue(AroundData.KEY_NAME, item.mName)
+						.withValue(AroundData.KEY_PRICE, item.mPrice)
+						.withValue(AroundData.KEY_DESCRIPTION,
+								item.mDescription)
+						.withValue(AroundData.KEY_ICON, item.mIcon)
+						.withValue(AroundData.KEY_TEL, item.mTel)
+						.withValue(AroundData.KEY_ADDRESS, item.mAddress)
+						.withValue(AroundData.KEY_LINK_URL, item.mLinkUrl)
+						.withValue(AroundData.KEY_PROIVDER, item.mProvider)
+						.withValue(AroundData.KEY_POST_ID,
+								mUserHistoryData.mPostId);
+				opertions.add(builder.build());
+			}
+
+			try {
+				resolver.applyBatch("com.comic.seexian", opertions);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			} catch (OperationApplicationException e) {
+				e.printStackTrace();
+			}
+
 			if (aroundListData.size() > 0) {
 				return "ok";
 			} else {

@@ -38,6 +38,7 @@ public class SeeXianProvider extends ContentProvider {
 	public static final String KEY_ADDRESS = "address";
 	public static final String KEY_LINK_URL = "link";
 	public static final String KEY_PROIVDER = "provider";
+	public static final String KEY_POST_ID = "postid";
 
 	/** Name of table in the database */
 	private static final String DB_TABLE_USER_POST = "userdata";
@@ -176,7 +177,8 @@ public class SeeXianProvider extends ContentProvider {
 					+ KEY_NAME + " TEXT," + KEY_PRICE + " TEXT,"
 					+ KEY_DESCRIPTION + " TEXT," + KEY_ICON + " TEXT, "
 					+ KEY_TEL + " TEXT, " + KEY_ADDRESS + " TEXT, "
-					+ KEY_LINK_URL + " TEXT, " + KEY_PROIVDER + " TEXT );";
+					+ KEY_LINK_URL + " TEXT, " + KEY_PROIVDER + " TEXT, "
+					+ KEY_POST_ID + " TEXT );";
 			Loge.v("create database Landscape = " + commandLandscape);
 			db.execSQL(commandLandscape);
 
