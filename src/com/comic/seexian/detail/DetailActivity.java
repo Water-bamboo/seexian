@@ -665,6 +665,7 @@ public class DetailActivity extends Activity implements OnClickListener {
 					AroundData aData = new AroundData();
 
 					aData.mName = jAddInfo.getString("name");
+					Loge.i("GetAroundNetTask mName = " + aData.mName);
 					aData.mPrice = jAddInfo.getString("price");
 					aData.mTel = jAddInfo.getString("telepnone");
 					aData.mAddress = jAddInfo.getString("address");
