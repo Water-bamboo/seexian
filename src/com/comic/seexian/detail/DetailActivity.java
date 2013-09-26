@@ -79,7 +79,6 @@ public class DetailActivity extends Activity implements OnClickListener {
 	private ImageButton mAroundRefreshButton = null;
 	private AroundGridAdapter mAroundGridAdapter = null;
 	private ProgressBar mAroundRefreshProgress = null;
-	private View mAroundLoadingView = null;
 
 	private ArrayList<AroundData> aroundListData = new ArrayList<AroundData>();
 
@@ -105,7 +104,6 @@ public class DetailActivity extends Activity implements OnClickListener {
 		distancePanel = (View) findViewById(R.id.distance_panel);
 		distanceText = (TextView) findViewById(R.id.distance_text);
 
-		mAroundLoadingView = (View) findViewById(R.id.around_refresh_view);
 		mAroundGrid = (GridView) findViewById(R.id.detail_grid);
 		mAroundRefreshButton = (ImageButton) findViewById(R.id.around_refresh_button);
 		mAroundRefreshProgress = (ProgressBar) findViewById(R.id.around_refresh_progress);
@@ -147,7 +145,8 @@ public class DetailActivity extends Activity implements OnClickListener {
 
 		@Override
 		public void onClick(View v) {
-
+			new GetAroundNetTask().execute(mUserHistoryData.mLat,
+					mUserHistoryData.mLng, "force_get");
 		}
 	};
 
@@ -514,31 +513,38 @@ public class DetailActivity extends Activity implements OnClickListener {
 				lat = params[0];
 				lng = params[1];
 			}
+
 			Loge.i("GetAroundNetTask lat = " + lat + " lng = " + lng);
 
 			ContentResolver resolver = mCtx.getContentResolver();
 
 			String where = SeeXianProvider.KEY_POST_ID + "='"
 					+ mUserHistoryData.mPostId + "'";
-			Cursor cursor = resolver.query(
-					SeeXianProvider.CONTENT_URI_SEE_XIAN_LANDSCAPE, null,
-					where, null, null);
-			if (cursor != null) {
-				if (cursor.moveToFirst()) {
-					do {
-						AroundData aData = new AroundData();
-						aData.mName = cursor.getString(1);
-						aData.mPrice = cursor.getString(2);
-						aData.mDescription = cursor.getString(3);
-						aData.mIcon = cursor.getString(4);
-						aData.mTel = cursor.getString(5);
-						aData.mAddress = cursor.getString(6);
-						aData.mLinkUrl = cursor.getString(7);
-						aData.mProvider = cursor.getString(8);
-						aroundListData.add(aData);
-					} while (cursor.moveToNext());
+
+			if (params.length == 3 && params[2].equals("force_get")) {
+				resolver.delete(SeeXianProvider.CONTENT_URI_SEE_XIAN_LANDSCAPE,
+						where, null);
+			} else {
+				Cursor cursor = resolver.query(
+						SeeXianProvider.CONTENT_URI_SEE_XIAN_LANDSCAPE, null,
+						where, null, null);
+				if (cursor != null) {
+					if (cursor.moveToFirst()) {
+						do {
+							AroundData aData = new AroundData();
+							aData.mName = cursor.getString(1);
+							aData.mPrice = cursor.getString(2);
+							aData.mDescription = cursor.getString(3);
+							aData.mIcon = cursor.getString(4);
+							aData.mTel = cursor.getString(5);
+							aData.mAddress = cursor.getString(6);
+							aData.mLinkUrl = cursor.getString(7);
+							aData.mProvider = cursor.getString(8);
+							aroundListData.add(aData);
+						} while (cursor.moveToNext());
+					}
+					cursor.close();
 				}
-				cursor.close();
 			}
 
 			if (aroundListData.size() == 25) {
@@ -636,14 +642,11 @@ public class DetailActivity extends Activity implements OnClickListener {
 		@Override
 		protected void onPostExecute(String result) {
 			mAroundRefreshProgress.setVisibility(View.GONE);
-
+			mAroundRefreshButton.setVisibility(View.VISIBLE);
 			if (result != null) {
-				mAroundLoadingView.setVisibility(View.GONE);
-				mAroundRefreshButton.setVisibility(View.GONE);
 				mAroundGrid.setVisibility(View.VISIBLE);
 				mAroundGridAdapter.setListData(aroundListData);
 			} else {
-				mAroundRefreshButton.setVisibility(View.VISIBLE);
 				mAroundGrid.setVisibility(View.GONE);
 			}
 			super.onPostExecute(result);
