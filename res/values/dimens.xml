@@ -8,5 +8,7 @@
     <dimen name="map_margin">3dp</dimen>
     
     <dimen name="content_margin">10dp</dimen>
+    
+    <dimen name="grid_item_height">55dp</dimen>
 
 </resources>

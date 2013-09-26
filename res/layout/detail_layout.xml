@@ -116,16 +116,16 @@
             <com.comic.seexian.detail.AroundGridView
                 android:id="@+id/detail_grid"
                 android:layout_width="match_parent"
-                android:layout_height="280dp"
+                android:layout_height="300dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="@dimen/content_margin"
                 android:layout_marginLeft="@dimen/content_margin"
                 android:layout_marginRight="@dimen/content_margin"
                 android:layout_marginTop="@dimen/content_margin"
-                android:horizontalSpacing="5dp"
+                android:horizontalSpacing="2dp"
                 android:numColumns="5"
                 android:stretchMode="columnWidth"
-                android:verticalSpacing="5dp" />
+                android:verticalSpacing="2dp" />
 
             <FrameLayout
                 android:layout_width="24dp"
