@@ -1,4 +1,4 @@
-看西安
+看西安 [![Google Play](http://developer.android.com/images/brand/en_generic_rgb_wo_45.png)](https://play.google.com/store/apps/details?id=com.comic.seexian)
 =======
 <img src="https://www.evernote.com/shard/s153/sh/95507f06-61e9-4842-b63a-95862a71a8a0/cec25dd4f8c199f25c825347d49345b4/deep/0/device-2013-09-16-210146-1.png">
 简介
