@@ -16,6 +16,13 @@
     <string name="network_warn">开启网络</string>
     <string name="network_warn_info">看西安需要访问网络。开开启Wi-Fi或者数据连接（数据连接资费请咨询运营商）。</string>
     
+    <string name="help_content_image_name">Help content</string>
+    
+    <string name="landscape_pic_name">Landscape Picture</string>
+    <string name="icon_pic_name">Icon Picture</string>
+    
+    <string name="wiki_pic_name">Wiki</string>
+    
     <string name="empty_text">无数据</string>
     <string name="loading">加载中&#8230;</string>
     
