@@ -398,6 +398,8 @@ public class DetailActivity extends Activity implements OnClickListener,
 		protected void onPostExecute(Void result) {
 			setDetailData();
 			new GetDetailDataNetTask().execute(null);
+
+			mAroundGrid.setVisibility(View.GONE);
 			new GetAroundNetTask().execute(mUserHistoryData.mLat,
 					mUserHistoryData.mLng);
 			super.onPostExecute(result);
@@ -530,7 +532,6 @@ public class DetailActivity extends Activity implements OnClickListener,
 
 		@Override
 		protected void onPreExecute() {
-			mAroundGrid.setVisibility(View.GONE);
 			mAroundRefreshButton.setVisibility(View.GONE);
 			mAroundRefreshProgress.setVisibility(View.VISIBLE);
 			aroundListData.clear();
@@ -680,6 +681,7 @@ public class DetailActivity extends Activity implements OnClickListener,
 			if (result != null) {
 				mAroundGrid.setVisibility(View.VISIBLE);
 				mAroundGridAdapter.setListData(aroundListData);
+				mAroundGridAdapter.notifyDataSetChanged();
 			} else {
 				mAroundGrid.setVisibility(View.GONE);
 			}
