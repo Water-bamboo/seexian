@@ -58,4 +58,12 @@
     <string name="distance_to">Distance to</string>
 
     <string name="kilometer">km</string>
+    
+    <string name="name">Name</string>
+    <string name="tel">Telephone</string>
+    <string name="addr">Address</string>
+    <string name="price">Price</string>
+    <string name="type">Type</string>
+    <string name="link">Link</string>
+    
 </resources>

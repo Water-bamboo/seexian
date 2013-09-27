@@ -51,4 +51,11 @@
     <string name="distance_to">距离</string>
     
     <string name="kilometer">公里</string>
+    
+    <string name="name">名称</string>
+    <string name="tel">电话</string>
+    <string name="addr">地址</string>
+    <string name="price">价格</string>
+    <string name="type">类型</string>
+    <string name="link">链接</string>
 </resources>

@@ -13,6 +13,7 @@ public class AroundData {
 	public static final String KEY_PROIVDER = "provider";
 	public static final String KEY_POST_ID = "postid";
 
+	public String mId;
 	public String mName;
 	public String mPrice;
 	public String mDescription;

@@ -32,6 +32,8 @@ import android.os.RemoteException;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.GridView;
 import android.widget.ImageButton;
@@ -42,6 +44,7 @@ import com.comic.seexian.Constants;
 import com.comic.seexian.Loge;
 import com.comic.seexian.R;
 import com.comic.seexian.database.SeeXianProvider;
+import com.comic.seexian.history.UserHistoryActivity;
 import com.comic.seexian.history.UserHistoryData;
 import com.comic.seexian.image.PhotoView;
 import com.comic.seexian.sinaauth.AccessTokenKeeper;
@@ -49,7 +52,8 @@ import com.comic.seexian.sinaauth.UserInfo;
 import com.comic.seexian.utils.SeeXianNetUtils;
 import com.comic.seexian.utils.SeeXianUtils;
 
-public class DetailActivity extends Activity implements OnClickListener {
+public class DetailActivity extends Activity implements OnClickListener,
+		OnItemClickListener {
 
 	private static final String[] interestSpot = { "景点", "小吃", "住宿" };
 
@@ -110,6 +114,7 @@ public class DetailActivity extends Activity implements OnClickListener {
 
 		mAroundGridAdapter = new AroundGridAdapter(this);
 		mAroundGrid.setAdapter(mAroundGridAdapter);
+		mAroundGrid.setOnItemClickListener(this);
 
 		int iconSize = mSreenWidth / 4;
 		LayoutParams params1 = new LayoutParams(iconSize, iconSize);
@@ -149,6 +154,34 @@ public class DetailActivity extends Activity implements OnClickListener {
 					mUserHistoryData.mLng, "force_get");
 		}
 	};
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int postion,
+			long arg3) {
+		Loge.i("onItemClick postion = " + postion);
+		AroundData item = aroundListData.get(postion);
+		if (item.mName != null && !item.mName.isEmpty()) {
+			Intent intent = new Intent();
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+			Bundle extras = new Bundle();
+			extras.putString(AroundData.KEY_ID, item.mId);
+			extras.putString(AroundData.KEY_NAME, item.mName);
+			extras.putString(AroundData.KEY_PRICE, item.mPrice);
+			extras.putString(AroundData.KEY_DESCRIPTION, item.mDescription);
+			extras.putString(AroundData.KEY_ICON, item.mIcon);
+			extras.putString(AroundData.KEY_TEL, item.mTel);
+			extras.putString(AroundData.KEY_ADDRESS, item.mAddress);
+			extras.putString(AroundData.KEY_LINK_URL, item.mLinkUrl);
+			extras.putString(AroundData.KEY_PROIVDER, item.mProvider);
+			extras.putString(AroundData.KEY_POST_ID, item.mPostId);
+
+			intent.putExtras(extras);
+			intent.setClass(DetailActivity.this, AroundDetailActivity.class);
+			startActivity(intent);
+		}
+
+	}
 
 	private void getDataFromExtra() {
 		Intent dataIntent = getIntent();
@@ -532,6 +565,7 @@ public class DetailActivity extends Activity implements OnClickListener {
 					if (cursor.moveToFirst()) {
 						do {
 							AroundData aData = new AroundData();
+							aData.mId = cursor.getString(0);
 							aData.mName = cursor.getString(1);
 							aData.mPrice = cursor.getString(2);
 							aData.mDescription = cursor.getString(3);
